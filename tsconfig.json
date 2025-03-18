@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@leaffyearth/utils/*": [
+        "packages/utils/*"
+      ],
+      "@leaffyearth/ui/*": [
+        "packages/ui/*"
+      ]
+    },
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true
+  }
+}

@@ -1,0 +1,7 @@
+npm install turbo --global
+npm install pnpm --global
+
+pnpm init  # for packages/utils and utils
+pnpm create next-app . --ts --eslint --tailwind --app --no-src-dir  # for pnpm with src
+
+pnpm --filter web run dev

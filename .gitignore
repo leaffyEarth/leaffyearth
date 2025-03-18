@@ -1,0 +1,46 @@
+
+# dependencies
+node_modules
+dist/
+
+# next.js
+.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+.pnpm-debug.log*
+
+# local env files
+.env*.local
+.env*.development
+.env
+
+# tinybird
+.venv
+.tinyb
+
+# turbo
+.turbo
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# miscellaneous
+/pages/api/scripts*
+
+packages/stripe-app/.build/*
+.react-email
+.contentlayer
+.vscode
+*.csv
+package-lock.json
+*.ndjson
+.vitest
