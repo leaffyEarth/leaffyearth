@@ -27,7 +27,7 @@ This repository consists of three main workspaces:
   }
 
 
-## **📍 `packages/ui` (Internal UI Library)**
+## **📍 `packages/utils` (Internal UI Library)**
 - **Technology:** typescript
 - **Purpose:** Common utility functions (formatting, API helpers, etc.)
 - **Location:** `packages/utils`
@@ -51,12 +51,26 @@ Before running LeaffyEarth, ensure you have the following installed:
   pnpm install
 ✅ This installs all dependencies and links the workspace packages.
 
-### 2️⃣ Start the Next.js App
-- To run the Next.js dashboard (apps/www), use:
+### 2️⃣ Start the App
+- To build the utils (packages/utils), use:
   ```sh
-  pnpm --filter web run dev
+  pnpm run dev-utils
+✅ This build will be compiled on /dist
+
+- To run the backend dashboard (apps/backend), use:
+  ```sh
+  pnpm run dev-backend
 ✅ This starts the app on http://localhost:3000.
 
+- To run the admin console (apps/web-console), use:
+  ```sh
+  pnpm run dev-console
+✅ This starts the app on http://localhost:5000.
+
+- To run the marketplace console (apps/web-console), use:
+  ```sh
+  pnpm run dev-marketplace
+✅ This starts the app on http://localhost:3001.
 
 ## **📌 Adding a New Package to the Monorepo**
 You can add a new package inside packages/ and link it to other workspaces.
