@@ -44,12 +44,12 @@ export interface PlantResponseData {
     updatedAt: string;
     images: string[];
     thumbnail: string;
-    type: string;
+    type: string[];
     lightExposure: string;
-    idealLocation: string;
+    idealLocation: string[];
     maintenance: string;
     watering: string;
     tags: string[];
     planterVariants: plantVariantType[];
-    
+
 }

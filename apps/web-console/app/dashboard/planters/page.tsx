@@ -68,7 +68,7 @@ export default function PlantersPage() {
         </Typography>
 
         <Button variant="contained" onClick={() => router.push('planters/add')}>
-          Add Plantes
+          Add Planter
         </Button>
       </Box>
 
@@ -93,7 +93,7 @@ export default function PlantersPage() {
       <Box sx={{ display: "flex", justifyContent: "center", mt: 2, mb: 5 }}>
         <Pagination
           page={page}
-          count={Math.ceil(total / pageSize)} 
+          count={Math.ceil(total / pageSize)}
           onChange={(event: React.ChangeEvent<unknown>, value: number) => setPage(value)}
           color="primary"
         />

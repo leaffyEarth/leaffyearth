@@ -35,6 +35,7 @@ import {
 import Image from "next/image";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UploadIcon from "@mui/icons-material/Upload";
+import { plantCategoryEnum } from '@/enums/planters-series.enum';
 
 interface PlanterVariantSectionProps {
     PlantDetails: PlantResponseData;
@@ -53,7 +54,7 @@ interface CreatePlanterVariant {
 export default function PlanterVariantSection({ PlantDetails, OnChange }: PlanterVariantSectionProps) {
     const [availableVariants, setAvailableVariants] = useState<AvailablePlanterVariant[]>([]);
     const [openAddDialog, setOpenAddDialog] = useState(false);
-    const [selectedSeries, setSelectedSeries] = useState<string>("");
+    const [selectedCategory, setSelectedCategory] = useState<string>("");
     const [selectedPlanter, setSelectedPlanter] = useState<string>("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string>("");
@@ -79,7 +80,7 @@ export default function PlanterVariantSection({ PlantDetails, OnChange }: Plante
     const handleCloseAddDialog = () => {
         setOpenAddDialog(false);
         // Reset form fields
-        setSelectedSeries("");
+        setSelectedCategory("");
         setSelectedPlanter("");
         setError("");
     };
@@ -94,7 +95,7 @@ export default function PlanterVariantSection({ PlantDetails, OnChange }: Plante
         setError("");
         try {
             const data: CreatePlanterVariant = {
-                planterSku: selectedPlanter,
+                planterSku: selectedPlanter[3],
             };
             await addPlanterVariant(PlantDetails._id, data);
             OnChange(); // Refresh parent component data
@@ -148,111 +149,62 @@ export default function PlanterVariantSection({ PlantDetails, OnChange }: Plante
         }
     };
 
-    // Filter availableVariants based on selectedSeries
-    const filteredPlanters = selectedSeries
-        ? availableVariants.filter(v => v.planterSeries === selectedSeries)
+    // Filter availableVariants based on selectedCategory
+    const filteredPlanters = selectedCategory
+        ? availableVariants.filter(v => v.planterCategory === selectedCategory)
         : [];
 
+    console.log(filteredPlanters);
+
+
     // Get unique series from availableVariants for dropdown
-    const uniqueSeries = Array.from(new Set(availableVariants.map(v => v.planterSeries)));
+    const uniqueSeries = Array.from(new Set(availableVariants.map(v => v.planterCategory)));
 
 
     return (
-        <Stack spacing={2}>
+        <Stack spacing={3}>
             {/* Header */}
-            <Stack direction="row" spacing={8}>
-                <Typography variant="h4">Planter Variants</Typography>
+            <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Typography variant="h4" fontWeight={600}>Planter Variants</Typography>
+                <Button variant="contained" color="primary" onClick={handleOpenAddDialog}>
+                    Add Planter Variant
+                </Button>
             </Stack>
-
-            {/* Add Planter Variant Button */}
-            <Button
-                variant="contained"
-                color="primary"
-                sx={{ height: "40px", alignSelf: "flex-end", mb: "24px" }}
-                onClick={handleOpenAddDialog}
-            >
-                Add Planter Variant
-            </Button>
 
             {/* Display Existing Planter Variants */}
             {PlantDetails?.planterVariants?.length === 0 ? (
-                <Typography variant="h6" sx={{ alignSelf: "center", py: "64px" }}>
+                <Typography variant="h6" textAlign="center" color="text.secondary" py={6}>
                     No variants selected
                 </Typography>
             ) : (
-                <Grid container spacing={2}>
+                <Grid container spacing={3} sx={{ pb: "24px", pr: "24px" }}>
                     {PlantDetails?.planterVariants?.map((variant) => (
                         <Grid item xs={12} sm={6} md={4} key={variant.planterSku}>
-                            <Card>
-                                {/* Display Thumbnail Image */}
+                            <Card sx={{ boxShadow: 3, borderRadius: 2 }}>
                                 {variant.images.length > 0 && (
-                                    <CardMedia>
-                                        <Image
-                                            src={variant.images[0]} // Display the first image as thumbnail
-                                            alt={variant.planterSku}
-                                            width={300}
-                                            height={200}
-                                            style={{ objectFit: "cover" }}
-                                        />
-                                    </CardMedia>
+                                    <CardMedia component="img" height="180" image={variant.images[0]} alt={variant.planterSku} />
                                 )}
                                 <CardContent>
-                                    <Typography variant="subtitle1" component="div">
-                                        SKU: {variant.planterSku}
-                                    </Typography>
-                                    {/* Add more details if available */}
+                                    <Typography variant="subtitle1" fontWeight={600}>SKU: {variant.planterSku}</Typography>
                                 </CardContent>
-                                <CardActions>
-                                    {/* Upload Image Button */}
-                                    <Button
-                                        size="small"
-                                        startIcon={<UploadIcon />}
-                                        onClick={() => {
-                                            const fileInput = document.createElement("input");
-                                            fileInput.type = "file";
-                                            fileInput.accept = "image/*";
-                                            fileInput.onchange = () => {
-                                                if (fileInput.files && fileInput.files[0]) {
-                                                    handleUploadImage(variant.planterSku, fileInput.files[0]);
-                                                }
-                                            };
-                                            fileInput.click();
-                                        }}
-                                    >
+                                <CardActions sx={{ justifyContent: "space-between" }}>
+                                    <Button size="small" startIcon={<UploadIcon />} onClick={() => {
+                                        const fileInput = document.createElement("input");
+                                        fileInput.type = "file";
+                                        fileInput.accept = "image/*";
+                                        fileInput.onchange = () => {
+                                            if (fileInput.files && fileInput.files[0]) {
+                                                handleUploadImage(variant.planterSku, fileInput.files[0]);
+                                            }
+                                        };
+                                        fileInput.click();
+                                    }}>
                                         Upload Image
                                     </Button>
-                                    {/* Delete Planter Variant Button */}
-                                    <IconButton
-                                        color="error"
-                                        onClick={() => handleDeletePlanterVariant(variant.planterSku)}
-                                    >
+                                    <IconButton color="error" onClick={() => handleDeletePlanterVariant(variant.planterSku)}>
                                         <DeleteIcon />
                                     </IconButton>
                                 </CardActions>
-                                {/* Display Images with Delete Option */}
-                                {variant.images.length > 0 && (
-                                    <Stack direction="row" spacing={1} padding={1} flexWrap="wrap">
-                                        {variant.images.map((img, idx) => (
-                                            <Stack key={idx} position="relative" mr={1} mb={1}>
-                                                <Image
-                                                    src={img}
-                                                    alt={`Image ${idx + 1}`}
-                                                    width={100}
-                                                    height={100}
-                                                    style={{ objectFit: "cover" }}
-                                                />
-                                                <IconButton
-                                                    size="small"
-                                                    color="error"
-                                                    sx={{ position: "absolute", top: 0, right: 0 }}
-                                                    onClick={() => handleDeleteImage(variant.planterSku, img)}
-                                                >
-                                                    <DeleteIcon fontSize="small" />
-                                                </IconButton>
-                                            </Stack>
-                                        ))}
-                                    </Stack>
-                                )}
                             </Card>
                         </Grid>
                     ))}
@@ -263,16 +215,16 @@ export default function PlanterVariantSection({ PlantDetails, OnChange }: Plante
             <Dialog open={openAddDialog} onClose={handleCloseAddDialog} fullWidth maxWidth="sm">
                 <DialogTitle>Add New Planter Variant</DialogTitle>
                 <DialogContent>
-                    <Stack spacing={2} mt={1}>
-                        {/* Select Series */}
+                    <Stack spacing={3} mt={1}>
+                        {/* Select Category */}
                         <FormControl fullWidth>
-                            <InputLabel id="series-label">Planter Series</InputLabel>
+                            <InputLabel id="series-label">Planter Category</InputLabel>
                             <Select
                                 labelId="series-label"
-                                value={selectedSeries}
-                                label="Planter Series"
+                                value={selectedCategory}
+                                label="Planter Category"
                                 onChange={(e: SelectChangeEvent<string>) => {
-                                    setSelectedSeries(e.target.value as string);
+                                    setSelectedCategory(e.target.value as string);
                                     setSelectedPlanter("");
                                     setError("");
                                 }}
@@ -282,11 +234,16 @@ export default function PlanterVariantSection({ PlantDetails, OnChange }: Plante
                                         {series}
                                     </MenuItem>
                                 ))}
+                                {/* {Object.values(plantCategoryEnum).map((series) => (
+                                    <MenuItem key={series} value={series}>
+                                        {series}
+                                    </MenuItem>
+                                ))} */}
                             </Select>
                         </FormControl>
 
                         {/* Select Planter Name */}
-                        <FormControl fullWidth disabled={!selectedSeries}>
+                        <FormControl fullWidth disabled={!selectedCategory}>
                             <InputLabel id="planter-label">Planter Name</InputLabel>
                             <Select
                                 labelId="planter-label"
@@ -296,10 +253,14 @@ export default function PlanterVariantSection({ PlantDetails, OnChange }: Plante
                                     setSelectedPlanter(e.target.value as string);
                                     setError("");
                                 }}
+                                renderValue={(selected) => {
+                                    const [category, series, color] = selected as unknown as string[];
+                                    return `${series} - ${color}`;
+                                }}
                             >
-                                {filteredPlanters.map((planter, idx) => (
-                                    <MenuItem key={idx} value={planter.planterSku}>
-                                        {planter.planterName} - {planter.color.name}
+                                {filteredPlanters?.map((planter, idx) => (
+                                    <MenuItem key={idx} value={[planter.planterCategory, planter.planterSeries, planter.color.name, planter.sku]}>
+                                        {planter.planterSeries} - {planter.color.name}
                                     </MenuItem>
                                 ))}
                             </Select>

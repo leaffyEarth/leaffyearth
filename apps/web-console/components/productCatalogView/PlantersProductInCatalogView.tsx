@@ -63,7 +63,7 @@ export default function PlantersProductInCatalog({ Planter, onChange }: { Plante
                 }}
             >
                 <Typography variant="subtitle1">
-                    {Planter.name}
+                    {Planter.planterCategory}-{Planter.planterSeries}-{Planter.color.name}
                 </Typography>
 
 

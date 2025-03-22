@@ -29,9 +29,10 @@ export class Plant {
     // filters
     // should be a array
     @Prop({
+        type: [String],
         enum: Object.values(PlantType),
     })
-    type!: string;
+    type!: PlantType[];
 
     @Prop({
         enum: Object.values(PlantLightExporeType),
@@ -40,9 +41,10 @@ export class Plant {
 
     // should be a array
     @Prop({
+        type: [String],
         enum: Object.values(PlantIdealLocationType),
     })
-    idealLocation!: string;
+    idealLocation!: PlantIdealLocationType[];
 
     @Prop({
         enum: Object.values(PlantMaintenanceType),
@@ -87,7 +89,7 @@ export class Plant {
     @Prop({ required: true, unique: true })
     sku!: string;
 
-    @Prop({type: [PlantsPlanterVariantsSchema], default: []})
+    @Prop({ type: [PlantsPlanterVariantsSchema], default: [] })
     planterVariants!: PlantsPlanterVariants[]
 
 }

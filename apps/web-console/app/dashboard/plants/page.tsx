@@ -12,7 +12,6 @@ import DeletePlantDialog from './components/deletePlantDialog';
 import PlantProductInCatalog from '@/components/productCatalogView/PlantProductInCatalogView';
 
 
-
 export default function PlantPage() {
   const router = useRouter();
   const [plants, setPlants] = useState<Plant[]>([])

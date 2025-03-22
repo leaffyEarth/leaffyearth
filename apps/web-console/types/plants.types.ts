@@ -57,12 +57,36 @@ export interface PlantsCatalogReponse {
 }
 
 
+// export interface AvailablePlanterVariant {
+//     planterSku: string;
+//     planterName: string;
+//     planterSeries: string;
+//     size: "small" | "medium" | "large" | "extra-large";
+//     color: { hex: string, name: string };
+// }
+
+export interface Dimensions {
+    height: string;
+    length: string;
+    width: string;
+}
+
+export interface Color {
+    hex: string;
+    name: string;
+}
+
 export interface AvailablePlanterVariant {
-    planterSku: string;
-    planterName: string;
+    planterCategory: string;
     planterSeries: string;
-    size: "small" | "medium" | "large" | "extra-large";
-    color: { hex: string, name: string };
+    price: string;
+    color: Color;
+    description: string;
+    size: string;
+    dimensions: Dimensions;
+    sku: string;
+    images: string[];
+    _id: string;
 }
 
 

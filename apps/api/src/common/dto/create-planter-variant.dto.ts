@@ -1,11 +1,13 @@
 // create-planter-variant.dto.ts
 import { IsString, IsNotEmpty, IsEnum, IsArray, IsOptional } from 'class-validator';
 import { sizeEnum } from '@leaffyearth/utils';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreatePlanterVariantDto {
 
     @IsString()
-    @IsNotEmpty()
+    // @IsNotEmpty()
+    @IsOptional()
     planterSku!: string;
 
     @IsEnum(sizeEnum, {
@@ -15,6 +17,7 @@ export class CreatePlanterVariantDto {
 
     @IsString()
     @IsNotEmpty()
+    @ApiProperty({ description: 'The color of the planter' })
     color!: string;
 
     @IsArray()

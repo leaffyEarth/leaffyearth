@@ -14,5 +14,6 @@ import { AzureBlobModule } from '../azure-blob/azure-blob.module';
   ],
   controllers: [PlantersController],
   providers: [PlanterService],
+  exports: [PlanterService],
 })
 export class PlantersModule { }

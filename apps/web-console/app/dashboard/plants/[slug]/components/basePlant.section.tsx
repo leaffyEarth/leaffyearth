@@ -44,9 +44,9 @@ interface FormData {
   description: string;
   size: string;
   dimensions: Dimensions;
-  type: string;
+  type: string[];
   lightExposure: string;
-  idealLocation: string;
+  idealLocation: string[];
   maintenance: string;
   watering: string;
   tags: string[];
@@ -71,9 +71,9 @@ export default function PlantDetailSection({ PlantDetails, OnChange }: { PlantDe
       length: PlantDetails.dimensions?.length?.toString() || "",
       width: PlantDetails.dimensions?.width?.toString() || "",
     },
-    type: PlantDetails.type || "",
+    type: PlantDetails.type || [],
     lightExposure: PlantDetails.lightExposure || "",
-    idealLocation: PlantDetails.idealLocation || "",
+    idealLocation: PlantDetails.idealLocation || [],
     maintenance: PlantDetails.maintenance || "",
     watering: PlantDetails.watering || "",
     tags: PlantDetails.tags || [],
@@ -128,12 +128,12 @@ export default function PlantDetailSection({ PlantDetails, OnChange }: { PlantDe
   };
 
 
-  const handleTypeChange = (e: SelectChangeEvent<string>) => {
-    setFormData((prev) => ({
-      ...prev,
-      type: e.target.value,
-    }));
-  };
+  // const handleTypeChange = (e: SelectChangeEvent<string>) => {
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     type: e.target.value,
+  //   }));
+  // };
 
   const handlePlantSeriesInputChange = (event: any, newValue: string) => {
     setFormData((prev) => ({
@@ -149,12 +149,12 @@ export default function PlantDetailSection({ PlantDetails, OnChange }: { PlantDe
     }));
   };
 
-  const handleIdealLocationChange = (e: SelectChangeEvent<string>) => {
-    setFormData((prev) => ({
-      ...prev,
-      idealLocation: e.target.value,
-    }));
-  };
+  // const handleIdealLocationChange = (e: SelectChangeEvent<string>) => {
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     idealLocation: e.target.value,
+  //   }));
+  // };
 
   const handleMaintenanceChange = (e: SelectChangeEvent<string>) => {
     setFormData((prev) => ({
@@ -241,7 +241,7 @@ export default function PlantDetailSection({ PlantDetails, OnChange }: { PlantDe
             variant="contained"
             color="primary"
             onClick={() => router.push(`${PlantDetails?._id}/upload-image`)}
-            sx={{ width: "200px", height: "50px", alignSelf: "flex-end" }}
+            sx={{ width: "400px", height: "50px", alignSelf: "flex-end" }}
           >
             Edit
           </Button>
@@ -373,16 +373,22 @@ export default function PlantDetailSection({ PlantDetails, OnChange }: { PlantDe
               <InputLabel>Type</InputLabel>
               <Select
                 label="Type"
-                value={formData.type}
+                multiple
                 disabled={!editable}
-                onChange={handleTypeChange}
-                sx={{
-                  width: "200px",
+                value={formData.type}
+                onChange={(e) => {
+                  const value = e.target.value as string[];
+                  setFormData((prev) => ({
+                    ...prev,
+                    type: value,
+                  }));
                 }}
+                renderValue={(selected) => selected.join(", ")}
+                sx={{ width: "200px" }}
               >
-                {Object.values(PlantType).map((value) => (
-                  <MenuItem key={value} value={value}>
-                    {value}
+                {Object.values(PlantType).map((val) => (
+                  <MenuItem key={val} value={val}>
+                    {formData.type.includes(val) ? "✓ " : ""}{val}
                   </MenuItem>
                 ))}
               </Select>
@@ -422,17 +428,23 @@ export default function PlantDetailSection({ PlantDetails, OnChange }: { PlantDe
             <FormControl>
               <InputLabel>Ideal Location</InputLabel>
               <Select
-                label="IdealLocation"
+                label="Ideal Location"
+                multiple
                 value={formData.idealLocation}
                 disabled={!editable}
-                onChange={handleIdealLocationChange}
-                sx={{
-                  width: "200px",
+                onChange={(e) => {
+                  const value = e.target.value as string[];
+                  setFormData((prev) => ({
+                    ...prev,
+                    idealLocation: value,
+                  }));
                 }}
+                renderValue={(selected) => selected.join(", ")}
+                sx={{ width: "200px" }}
               >
-                {Object.values(PlantIdealLocationType).map((value) => (
-                  <MenuItem key={value} value={value}>
-                    {value}
+                {Object.values(PlantIdealLocationType).map((val) => (
+                  <MenuItem key={val} value={val}>
+                    {formData.idealLocation.includes(val) ? "✓ " : ""}{val}
                   </MenuItem>
                 ))}
               </Select>

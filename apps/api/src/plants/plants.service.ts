@@ -10,6 +10,12 @@ import { AzureBlobService } from '../azure-blob/azure-blob.service';
 import { PlantFamilyQuery } from './dto/plant-family-query.dto';
 import { QuerySeriedDto } from './dto/query-seried.dto';
 import { PartialUpdatePlanterVariantDto, UpdatePlanterVariantDto } from './dto/update-planter-varients.dto';
+import { CreatePotDto } from '../pots/dto/create-planter.dto';
+import { PlanterService } from '../pots/planter.service';
+import { Pot } from '../models/pot.schema';
+import { plantCategoryEnum } from '@leaffyearth/utils';
+import { ColorDto } from '../common/dto/color.dto';
+import { sizeEnum } from '@leaffyearth/utils';
 
 
 @Injectable()
@@ -18,11 +24,12 @@ export class PlantsService {
     constructor(
         @InjectModel(Plant.name) private plantModel: Model<PlantDocument>,
         private readonly skuService: SkuService,
-        private readonly azureBlobService: AzureBlobService
+        private readonly azureBlobService: AzureBlobService,
+        private readonly planterService: PlanterService,
     ) { }
 
     async create(createPlantDto: CreatePlantDto): Promise<Plant> {
-        const sku = this.skuService.generateSku(productEnum.PLANT, createPlantDto.name, createPlantDto.size);
+        const sku = this.skuService.generatePlantSku(productEnum.PLANT, createPlantDto.name, createPlantDto.size);
         const existing = await this.plantModel.findOne({ sku }).exec();
         if (existing) {
             throw new ConflictException('SKU already exists');
@@ -260,9 +267,31 @@ export class PlantsService {
         return plantSeries[0];
     }
 
-    async findAllPlanterVariants(): Promise<PlanterVariantType[]> {
-        return PlanterVariants
+    // async findAllPlanterVariants(): Promise<PlanterVariantType[]> {
+    //     return PlanterVariants
+    // }
+
+    async findAllPlanterVariants(): Promise<Partial<CreatePotDto[]>> {
+        const planters = await this.planterService.getAllPlanters();
+        return planters.map((planter) => {
+            if (!Object.values(plantCategoryEnum).includes(planter.planterCategory as plantCategoryEnum)) {
+                throw new Error(`Invalid planterCategory: ${planter.planterCategory}`);
+            }
+            return {
+                name: planter.name,
+                planterCategory: planter.planterCategory as plantCategoryEnum,
+                planterSeries: planter.planterSeries,
+                dimensions: planter.dimensions,
+                color: planter.color as ColorDto,
+                price: planter.price,
+                images: planter.images,
+                size: planter.size as sizeEnum,
+                sku: planter.sku,
+                description: planter.description || '',
+            };
+        });
     }
+
 
     async removeImage(id: string, imageId: string): Promise<Plant> {
         const plant = await this.plantModel.findById(id).exec();
@@ -299,16 +328,15 @@ export class PlantsService {
         plantId: string,
         createDto: UpdatePlanterVariantDto
     ): Promise<Plant> {
-        const validVariant = PlanterVariants.find(
-            (pv) => pv.planterSku === createDto.planterSku,
-        );
+        // const validVariant = PlanterVariants.find(
+        //     (pv) => pv.planterSku === createDto.planterSku,
+        // );
 
-        if (!validVariant) {
-            throw new BadRequestException(
-                `Invalid planterSku '${createDto.planterSku}'.`,
-            );
-        }
-
+        // if (!validVariant) {
+        //     throw new BadRequestException(
+        //         `Invalid planterSku '${createDto.planterSku}'.`,
+        //     );
+        // }
         const plant = await this.plantModel.findById(plantId);
         if (!plant) {
             throw new NotFoundException(`Plant with ID '${plantId}' not found.`);
@@ -413,5 +441,4 @@ export class PlantsService {
         variant.images.push(blobUrl);
         await plant.save();
     }
-
 }

@@ -18,8 +18,8 @@ export class PlanterService {
   ) { }
 
   async create(createPotDto: CreatePotDto): Promise<Pot> {
-    // Generate a SKU, e.g., "POT", pot name, size
-    const sku = this.skuService.generateSku(productEnum.POT, createPotDto.name, createPotDto.size);
+    // Generate a SKU, e.g., "POT", planter category, planter series, size, color
+    const sku = this.skuService.generatePlanterSku(createPotDto.planterSeries, createPotDto.planterCategory, createPotDto.size, createPotDto.color.name);
     const pot = new this.potModel({ ...createPotDto, sku });
     return pot.save();
   }
@@ -87,5 +87,10 @@ export class PlanterService {
     const pot = await this.potModel.findByIdAndDelete(id).exec();
     if (!pot) throw new NotFoundException('Pot not found');
     return pot;
+  }
+
+  async getAllPlanters(): Promise<Pot[]> {
+    const allPlanters = await this.potModel.find();
+    return allPlanters;
   }
 }

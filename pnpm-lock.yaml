@@ -252,6 +252,12 @@ importers:
       '@emotion/styled':
         specifier: ^11.14.0
         version: 11.14.0(@emotion/react@11.14.0(@types/react@19.0.11)(react@19.0.0))(@types/react@19.0.11)(react@19.0.0)
+      '@leaffyearth/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      '@leaffyearth/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       '@mui/icons-material':
         specifier: ^6.2.1
         version: 6.4.8(@mui/material@6.4.8(@emotion/react@11.14.0(@types/react@19.0.11)(react@19.0.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.11)(react@19.0.0))(@types/react@19.0.11)(react@19.0.0))(@types/react@19.0.11)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(@types/react@19.0.11)(react@19.0.0)

@@ -1,0 +1,9 @@
+version: '3.8'
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: leafy-mongo
+    ports:
+      - 27018:27017 # relace the 27017 in the front for changing the ports
+    volumes:
+      - ~/mongo-data:/data/db

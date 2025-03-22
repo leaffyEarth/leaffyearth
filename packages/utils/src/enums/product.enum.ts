@@ -1,5 +1,4 @@
 export enum productEnum {
-    PLANT = 'PLANT',
-    POT = 'POT',
-  }
-  
+  PLANT = 'PLANT',
+  POT = 'POT',
+}

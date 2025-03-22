@@ -35,14 +35,14 @@ interface Dimensions {
 
 interface FormData {
   plantName: string;
-  plantSeries: string; 
+  plantSeries: string;
   price: string;
   description: string;
   size: string;
   dimensions: Dimensions;
-  type: string | null;
+  type: string[],
   lightExposure: string | null;
-  idealLocation: string | null;
+  idealLocation: string[];
   maintenance: string | null;
   watering: string | null;
   tags: string[];
@@ -63,9 +63,9 @@ export default function AddPlantPage() {
       length: "",
       width: "",
     },
-    type: null,
+    type: [],
     lightExposure: null,
-    idealLocation: null,
+    idealLocation: [],
     maintenance: null,
     watering: null,
     tags: [],
@@ -82,8 +82,8 @@ export default function AddPlantPage() {
   const getAllPlantFamilies = async () => {
     try {
       const { data } = await api.get("/plants/series");
-      const familyNames = data.map((item: any) => item._id); 
-      setPlantFamilyNames(familyNames); 
+      const familyNames = data.map((item: any) => item._id);
+      setPlantFamilyNames(familyNames);
     } catch (err) {
       console.error("Failed to fetch plant families", err);
     }
@@ -120,12 +120,12 @@ export default function AddPlantPage() {
     }));
   };
 
-  const handleTypeChange = (e: SelectChangeEvent<string>) => {
-    setFormData((prev) => ({
-      ...prev,
-      type: e.target.value,
-    }));
-  };
+  // const handleTypeChange = (e: SelectChangeEvent<string>) => {
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     type: e.target.value,
+  //   }));
+  // };
 
   const handleLightExposureChange = (e: SelectChangeEvent<string>) => {
     setFormData((prev) => ({
@@ -134,12 +134,12 @@ export default function AddPlantPage() {
     }));
   };
 
-  const handleIdealLocationChange = (e: SelectChangeEvent<string>) => {
-    setFormData((prev) => ({
-      ...prev,
-      idealLocation: e.target.value,
-    }));
-  };
+  // const handleIdealLocationChange = (e: SelectChangeEvent<string>) => {
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     idealLocation: e.target.value,
+  //   }));
+  // };
 
   const handleMaintenanceChange = (e: SelectChangeEvent<string>) => {
     setFormData((prev) => ({
@@ -198,9 +198,9 @@ export default function AddPlantPage() {
         description: "",
         size: "",
         dimensions: { height: "", length: "", width: "" },
-        type: null,
+        type: [],
         lightExposure: null,
-        idealLocation: null,
+        idealLocation: [],
         maintenance: null,
         watering: null,
         tags: [],
@@ -259,15 +259,15 @@ export default function AddPlantPage() {
               required
               sx={{
                 "& .MuiInputBase-input": {
-                  fontSize: 45,
+                  fontSize: 25,
                 },
                 "& .MuiInputLabel-root": {
-                  fontSize: 45,
+                  fontSize: 18,
                 },
               }}
             />
 
-            
+            {/* PLANT SERIES */}
             <Autocomplete
               freeSolo
               options={plantFamilyNames}
@@ -278,6 +278,14 @@ export default function AddPlantPage() {
                   ...prev,
                   plantSeries: newInputValue,
                 }));
+              }}
+              sx={{
+                "& .MuiInputBase-input": {
+                  fontSize: 25,
+                },
+                "& .MuiInputLabel-root": {
+                  fontSize: 18,
+                },
               }}
               renderInput={(params) => (
                 <TextField
@@ -307,10 +315,10 @@ export default function AddPlantPage() {
               sx={{
                 width: "150px",
                 "& .MuiInputBase-input": {
-                  fontSize: 20,
+                  fontSize: 25,
                 },
                 "& .MuiInputLabel-root": {
-                  fontSize: 15,
+                  fontSize: 18,
                 },
               }}
             />
@@ -350,13 +358,21 @@ export default function AddPlantPage() {
                 <InputLabel>Type</InputLabel>
                 <Select
                   label="Type"
-                  value={formData.type ?? ""}
-                  onChange={handleTypeChange}
+                  multiple
+                  value={formData.type}
+                  onChange={(e) => {
+                    const value = e.target.value as string[];
+                    setFormData((prev) => ({
+                      ...prev,
+                      type: value,
+                    }));
+                  }}
+                  renderValue={(selected) => selected.join(", ")}
                   sx={{ width: "200px" }}
                 >
-                  {Object.values(PlantType).map((plantEnumValue) => (
-                    <MenuItem key={plantEnumValue} value={plantEnumValue}>
-                      {plantEnumValue}
+                  {Object.values(PlantType).map((val) => (
+                    <MenuItem key={val} value={val}>
+                      {formData.type.includes(val) ? "✓ " : ""}{val}
                     </MenuItem>
                   ))}
                 </Select>
@@ -382,13 +398,21 @@ export default function AddPlantPage() {
                 <InputLabel>Ideal Location</InputLabel>
                 <Select
                   label="Ideal Location"
-                  value={formData.idealLocation ?? ""}
-                  onChange={handleIdealLocationChange}
+                  multiple
+                  value={formData.idealLocation}
+                  onChange={(e) => {
+                    const value = e.target.value as string[];
+                    setFormData((prev) => ({
+                      ...prev,
+                      idealLocation: value,
+                    }));
+                  }}
+                  renderValue={(selected) => selected.join(", ")}
                   sx={{ width: "200px" }}
                 >
                   {Object.values(PlantIdealLocationType).map((val) => (
                     <MenuItem key={val} value={val}>
-                      {val}
+                      {formData.idealLocation.includes(val) ? "✓ " : ""}{val}
                     </MenuItem>
                   ))}
                 </Select>
@@ -478,7 +502,7 @@ export default function AddPlantPage() {
               color="primary"
               onClick={handleSubmit}
               disabled={loading}
-              sx={{ width: "400px", height: "60px", alignSelf: "flex-end" }}
+              sx={{ width: "400px", height: "60px", alignSelf: "flex-end", mb: "24px" }}
             >
               {loading ? "Submitting" : "Submit"}
             </Button>

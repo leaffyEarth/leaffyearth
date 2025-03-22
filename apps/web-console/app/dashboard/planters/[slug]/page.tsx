@@ -7,6 +7,7 @@ import { PlantResponseData } from '@/types/response.types';
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import { useRouter } from 'next/navigation';
 import PlantersImageCarousel from '@/components/plantersImageCarousel/planterImageCarousel';
+import { plantCategoryEnum } from '@/enums/planters-series.enum';
 
 
 
@@ -17,10 +18,17 @@ interface Dimensions {
     width: string;
 }
 
+interface Color {
+    hex: string;
+    name: string;
+}
+
 interface FormData {
-    planterName: string;
+    name: string;
+    planterCategory: string;
+    planterSeries: string;
     price: string;
-    color: string;
+    color: Color;
     description: string;
     size: string;
     dimensions: Dimensions;
@@ -39,11 +47,16 @@ export default function PlantersDetailPage(props: { params: Promise<{ slug: stri
     const [editable, setEditable] = useState<boolean>(false)
 
     const [formData, setFormData] = useState<FormData>({
-        planterName: "",
+        name: "", // Ensure name is always a string
+        planterCategory: "",
+        planterSeries: "",
         price: "",
         description: "",
         size: "",
-        color: "",
+        color: {
+            hex: "",
+            name: "",
+        },
         dimensions: {
             height: "",
             length: "",
@@ -73,7 +86,9 @@ export default function PlantersDetailPage(props: { params: Promise<{ slug: stri
             const planterDetails = await api.get(`/planters/${planterId}`)
             setPlanterDetails(planterDetails.data)
             setFormData({
-                planterName: planterDetails.data.name,
+                name: planterDetails.data.name,
+                planterCategory: planterDetails.data.planterCategory,
+                planterSeries: planterDetails.data.planterSeries,
                 description: planterDetails.data.description,
                 price: planterDetails.data.price.toString(),
                 size: planterDetails.data.size,
@@ -101,6 +116,13 @@ export default function PlantersDetailPage(props: { params: Promise<{ slug: stri
         }));
     };
 
+    const handlePlanterCategoryChange = (e: SelectChangeEvent<string>) => {
+        setFormData((prev) => ({
+            ...prev,
+            planterCategory: e.target.value,
+        }));
+    };
+
     const handleSizeChange = (e: SelectChangeEvent<string>) => {
         setFormData((prev) => ({
             ...prev,
@@ -122,18 +144,24 @@ export default function PlantersDetailPage(props: { params: Promise<{ slug: stri
     const handleColorChange = (e: ChangeEvent<HTMLInputElement>) => {
         setFormData((prev) => ({
             ...prev,
-            color: e.target.value,
+            color: {
+                ...prev.color,
+                [e.target.name]: e.target.value,
+            },
         }));
     };
 
 
     const handleSubmit = async () => {
         if (
-            !formData.planterName.trim() ||
+            !formData.name.trim() ||
+            !formData.planterCategory.trim() ||
+            !formData.planterSeries.trim() ||
             !formData.price.trim() ||
             !formData.description.trim() ||
             !formData.size.trim() ||
-            !formData.color.trim() ||
+            !formData.color.hex.trim() ||
+            !formData.color.name.trim() ||
             !formData.dimensions.height.trim() ||
             !formData.dimensions.length.trim() ||
             !formData.dimensions.width.trim()
@@ -146,6 +174,8 @@ export default function PlantersDetailPage(props: { params: Promise<{ slug: stri
             setError("");
             setLoading(true)
             await api.patch(`planters/${planterDetails?._id}`, {
+                name: formData.name,
+                plantCategoryEnum: formData.planterSeries,
                 price: parseInt(formData.price, 0),
                 description: formData.description,
                 size: formData.size,
@@ -212,14 +242,59 @@ export default function PlantersDetailPage(props: { params: Promise<{ slug: stri
                             gap: "36px",
                         }}
                     >
-                        {/* PLANTER NAME */}
+                        {/* NAME */}
                         <TextField
-                            name="planterName"
-                            placeholder="Planter Name"
+                            name="name"
+                            placeholder="Name"
                             disabled={!editable}
                             variant="standard"
-                            value={formData.planterName}
-                            // onChange={handleInputChange}
+                            value={formData.name}
+                            onChange={handleInputChange}
+                            required
+                            sx={{
+                                "& .MuiInputBase-input": {
+                                    fontSize: 45,
+                                },
+                                "& .MuiInputLabel-root": {
+                                    fontSize: 45,
+                                },
+                            }}
+                        />
+
+                        {/* PLANTER CATEGORY */}
+                        <FormControl required>
+                            <InputLabel>Planter Category</InputLabel>
+                            <Select
+                                name="planterCategory"
+                                label="Planter Category"
+                                value={formData.planterCategory}
+                                disabled={!editable}
+                                onChange={handlePlanterCategoryChange}
+                                sx={{
+                                    "& .MuiInputBase-input": {
+                                        fontSize: 45,
+                                    },
+                                    "& .MuiInputLabel-root": {
+                                        fontSize: 45,
+                                    },
+                                }}
+                            >
+                                {Object.values(plantCategoryEnum).map((planterSeriesEnumValue) => (
+                                    <MenuItem key={planterSeriesEnumValue} value={planterSeriesEnumValue}>
+                                        {planterSeriesEnumValue}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+
+                        {/* PLANTER SERIES */}
+                        <TextField
+                            name="planterSeries"
+                            placeholder="Planter Series"
+                            disabled={!editable}
+                            variant="standard"
+                            value={formData.planterSeries}
+                            onChange={handleInputChange}
                             required
                             sx={{
                                 "& .MuiInputBase-input": {
@@ -292,20 +367,40 @@ export default function PlantersDetailPage(props: { params: Promise<{ slug: stri
                         </FormControl>
 
                         {/* COLOR */}
-                        <FormControl required>
-                            <TextField
-                                name="Color"
-                                label="Color"
-                                disabled={!editable}
-                                variant="outlined"
-                                value={formData.color}
-                                onChange={handleColorChange}
-                                required
-                                sx={{
-                                    width: "200px",
-                                }}
-                            />
-                        </FormControl>
+                        <Box>
+                            <InputLabel sx={{ mb: "12px" }}>Color</InputLabel>
+                            <Box
+                                component="form"
+                                sx={{ display: "flex", gap: "12px" }}
+                                noValidate
+                                autoComplete="off"
+                            >
+                                <TextField
+                                    name="hex"
+                                    label="Hex Code"
+                                    variant="outlined"
+                                    value={formData.color.hex}
+                                    onChange={handleColorChange}
+                                    disabled={!editable}
+                                    required
+                                    sx={{
+                                        width: "150px",
+                                    }}
+                                />
+                                <TextField
+                                    name="name"
+                                    label="Color Name"
+                                    variant="outlined"
+                                    value={formData.color.name}
+                                    onChange={handleColorChange}
+                                    disabled={!editable}
+                                    required
+                                    sx={{
+                                        width: "150px",
+                                    }}
+                                />
+                            </Box>
+                        </Box>
 
                         {/* DIMENSIONS */}
                         <Box>

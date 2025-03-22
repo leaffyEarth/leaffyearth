@@ -33,10 +33,12 @@ export class CreatePlantDto {
     price!: number;
 
     @IsOptional()
+    @IsArray()
     @IsEnum(PlantType, {
-        message: `Plant type must be one of ${Object.values(PlantType).join(', ')}`,
+        message: `Plant type must be from ${Object.values(PlantType).join(', ')}`,
+        each: true
     })
-    type!: string;
+    type!: PlantType[];
 
     @IsOptional()
     @IsEnum(PlantLightExporeType, {
@@ -45,10 +47,12 @@ export class CreatePlantDto {
     lightExposure!: string;
 
     @IsOptional()
+    @IsArray()
     @IsEnum(PlantIdealLocationType, {
         message: `Plant ideal location must be one of ${Object.values(PlantIdealLocationType).join(', ')}`,
+        each: true
     })
-    idealLocation!: string;
+    idealLocation!: PlantIdealLocationType[];
 
     @IsOptional()
     @IsEnum(PlantMaintenanceType, {

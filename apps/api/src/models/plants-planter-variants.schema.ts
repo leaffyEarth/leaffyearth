@@ -8,10 +8,12 @@ export type PlantsPlanterVariantsDocument = PlantsPlanterVariants & Document;
 export class PlantsPlanterVariants {
 
     @Prop({
+        type: String,
         required: true,
-        unique: true
+        // unique: true,
+        sparse: true, // Allow multiple null values
     })
-    planterSku!: string;
+    planterSku!: string | null;
 
     @Prop({
         type: [String],
