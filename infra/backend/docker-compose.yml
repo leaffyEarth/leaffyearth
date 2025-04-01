@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ../..  # Root of the monorepo
+      dockerfile: infra/backend/Dockerfile
+    ports:
+      - "3000:3000"
+    container_name: my-backend
+    restart: unless-stopped

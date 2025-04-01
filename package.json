@@ -7,9 +7,13 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "pnpm --filter backend run start:dev && pnpm --filter console run dev -- -p 5000",
     "dev-backend": "pnpm --filter backend run start:dev",
+    "build-backend": "pnpm --filter backend run build",
+    "prod-backend": "pnpm --filter backend run start:prod",
+    "doc-backend": "docker compose -f ./infra/backend/docker-compose.yml up",
     "dev-console": "pnpm --filter console run dev",
     "dev-marketplace": "pnpm --filter marketplace run dev",
     "dev-utils": "pnpm --filter utils run dev",
+<<<<<<< HEAD
     "build": "pnpm run build --filter ./...",
     "build-backend": "pnpm --filter backend run build",
     "build-console": "pnpm --filter console run build",
@@ -19,6 +23,10 @@
     "prod-console": "pnpm --filter console run start",
     "prod-marketplace": "pnpm --filter marketplace run start",
     "doc-all": "docker compose -f ./infra/docker-compose.yml up"
+=======
+    "build-utils": "pnpm --filter utils run build",
+    "build": "pnpm run build --filter ./..."
+>>>>>>> 49996729d9a5b02f00dd56b1d523fbeee2eecfc1
   },
   "keywords": [],
   "author": "",

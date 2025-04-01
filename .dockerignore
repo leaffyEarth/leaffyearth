@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 # dependencies
 node_modules
@@ -5,3 +6,8 @@ node_modules
 .next
 out
 .git
+=======
+
+# dependencies
+node_modules
+>>>>>>> 49996729d9a5b02f00dd56b1d523fbeee2eecfc1
