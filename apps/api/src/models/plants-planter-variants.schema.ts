@@ -9,11 +9,11 @@ export class PlantsPlanterVariants {
 
     @Prop({
         type: String,
-        required: true,
+        // required: true,
         // unique: true,
         sparse: true, // Allow multiple null values
     })
-    planterSku!: string | null;
+    planterSku!: string;
 
     @Prop({
         type: [String],

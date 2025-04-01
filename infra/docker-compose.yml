@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: leafy-mongo
+    ports:
+      - "27018:27017"  # Expose MongoDB on port 27018 (local) -> 27017 (container)
+    volumes:
+      - ~/mongo-data:/data/db
+    networks:
+      - app-network
+    restart: unless-stopped 
+
+  backend:
+    build:
+      context: ../../leaffyearth  # Root of the monorepo
+      dockerfile: infra/backend/Dockerfile
+    ports:
+      - "3000:3000"
+    container_name: my-backend
+    restart: unless-stopped
+    depends_on:
+      - mongodb  # Ensures MongoDB starts first
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017/leaffyearth  # Use service name "mongodb", NOT localhost
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ../../leaffyearth  # Root of the monorepo
+      dockerfile: infra/frontend/Dockerfile
+    ports:
+      - "5000:3000"  # Expose frontend on port 5000 (local) -> 3000 (container)
+    container_name: my-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend  # Ensure backend starts before frontend
+    networks:
+      - app-network
+    environment:
+      - NEXT_PUBLIC_API_SERVER_BASE_URL=http://localhost:3000  # Point Next.js frontend to backend inside Docker
+  
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
+    driver: local

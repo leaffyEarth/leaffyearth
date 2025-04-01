@@ -7,13 +7,9 @@ import { CommonModule } from '../common/common.module'; // if you have a shared 
 import { AzureBlobModule } from '../azure-blob/azure-blob.module';
 
 @Module({
-  imports: [
-    ModelsModule,
-    CommonModule,
-    AzureBlobModule
-  ],
+  imports: [ModelsModule, CommonModule, AzureBlobModule],
   controllers: [PlantersController],
   providers: [PlanterService],
   exports: [PlanterService],
 })
-export class PlantersModule { }
+export class PlantersModule {}

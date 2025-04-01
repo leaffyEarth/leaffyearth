@@ -80,7 +80,6 @@ export default function PlantDetailsSection({ plantSeries, variant, plantPlanter
         );
     }
 
-
     const plantVariant = useMemo(() => {
         const plant__v = plantSeries.plants.find((plant) => plant.size === selectedSize);
         if (plant__v && selectedPlanter) {
@@ -114,13 +113,12 @@ export default function PlantDetailsSection({ plantSeries, variant, plantPlanter
 
 
 
-
     useEffect(() => {
         if (selectedPlanterSku) {
 
             if (plantVariant.planterVariants.map((variant) => variant.planterSku).includes(selectedPlanterSku)) {
 
-                let DefaultPanterVarient = plantPlanterVarients.find((planter) => planter.planterSku === selectedPlanterSku)
+                const DefaultPanterVarient = plantPlanterVarients.find((planter) => planter.planterSku === selectedPlanterSku)
                 if (DefaultPanterVarient) {
                     const plantGroupedSeries = groupedPlantSeries?.find((planterSeries) => planterSeries.planterSeries === DefaultPanterVarient.planterSeries)
                     if (plantGroupedSeries) {

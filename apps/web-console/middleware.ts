@@ -1,21 +1,39 @@
-// app/middleware.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { api } from './services/api';
+import { NextRequest, NextResponse } from "next/server";
 
 export async function middleware(req: NextRequest) {
+  const token = req.cookies.get("token")?.value;
   const { pathname } = req.nextUrl;
 
-  if (pathname.startsWith('/dashboard')) {
-    const token = req.cookies.get('token');
+  // ✅ Allow public access to the login page
+  if (!token) {
+    if (pathname.startsWith('/auth/login')) {
+      return NextResponse.next(); // ✅ Allow users to access login page freely
+    }
+    return NextResponse.redirect(new URL('/auth/login', req.url));
+  }
 
-    if (!token) {
-      try {
-        const response = await api.get('/auth/me');
-      } catch (err: any) {
-        console.log("error in the request")
-        // return NextResponse.redirect(new URL('/auth/login', req.url));
-      }
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_SERVER_BASE_URL}/auth/me`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
 
+    if (!response.ok) {
+      throw new Error("Failed to authenticate");
+    }
+
+    // ✅ Prevent redirecting an already authenticated user back to login
+    if (pathname === '/auth/login') {
+      return NextResponse.redirect(new URL('/dashboard', req.url));
+    }
+  } catch (err) {
+    console.error("Authentication error:", err);
+
+    // ✅ Prevent redirect loop by only redirecting if not already on /auth/login
+    if (!pathname.startsWith('/auth/login')) {
+      return NextResponse.redirect(new URL('/auth/login', req.url));
     }
   }
 
@@ -23,5 +41,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*'],
+  matcher: ["/", "/dashboard/:path*", "/auth/login"],
 };

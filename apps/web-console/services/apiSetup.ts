@@ -1,8 +1,8 @@
 // src/services/apiSetup.ts
-import { AxiosError } from 'axios';
-import type { AppDispatch } from '@/store';
-import { showAlert } from '@/features/alerts/alertsSlice';
-import { api } from './api';
+import { AxiosError } from "axios";
+import type { AppDispatch } from "@/store";
+import { showAlert } from "@/features/alerts/alertsSlice";
+import { api } from "./api";
 
 export function setupInterceptors(dispatch: AppDispatch) {
   api.interceptors.request.use(
@@ -15,7 +15,9 @@ export function setupInterceptors(dispatch: AppDispatch) {
     async (error: AxiosError) => {
       // Example error handling:
       if (!error.response) {
-        dispatch(showAlert({ message: 'Unknown error occurred', severity: 'error' }));
+        dispatch(
+          showAlert({ message: "Unknown error occurred", severity: "error" }),
+        );
         return Promise.reject(error);
       }
 
@@ -23,14 +25,16 @@ export function setupInterceptors(dispatch: AppDispatch) {
         const message =
           (error.response.data as any)?.message ||
           error.message ||
-          'Something went wrong';
+          "Something went wrong";
 
-        dispatch(showAlert({ message, severity: 'error' }));
+        dispatch(showAlert({ message, severity: "error" }));
       }
 
       if (error.response?.status === 401) {
-        dispatch(showAlert({ message: 'Unauthorized Action', severity: 'error' }));
-        window.location.href = '/auth/login';
+        dispatch(
+          showAlert({ message: "Unauthorized Action", severity: "error" }),
+        );
+        // window.location.href = "/auth/login";
       }
 
       return Promise.reject(error);

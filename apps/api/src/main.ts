@@ -21,10 +21,17 @@ async function bootstrap() {
   app.use(helmet());
   app.use(cookieParser());
   app.enableCors({
-    origin: [process.env.ADMIN_CONSOLE_URL || 'http://localhost:3000', process.env.MARKETPLACE_URL || 'http://localhost:8000'],
+    origin: [
+      process.env.ADMIN_CONSOLE_URL || 'http://localhost:3000',
+      process.env.MARKETPLACE_URL || 'http://localhost:8000',
+      'http://backend:3000',
+      'http://backend:8000',
+    ],
     credentials: true,
   });
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }));
+  app.useGlobalPipes(
+    new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
+  );
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

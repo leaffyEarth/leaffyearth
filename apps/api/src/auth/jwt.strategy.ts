@@ -8,20 +8,19 @@ import { RequestWithCookies } from 'src/common/types.interface';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-    constructor(private configService: ConfigService) {
-        super({
-            jwtFromRequest: ExtractJwt.fromExtractors([
-                (req: RequestWithCookies) => {
-                    return req?.cookies?.token;
-                },
-            ]),
-            ignoreExpiration: false,
-            secretOrKey: configService.get<string>('JWT_SECRET'),
-        });
-    }
+  constructor(private configService: ConfigService) {
+    super({
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (req: RequestWithCookies) => req?.cookies?.token || null,
+        ExtractJwt.fromAuthHeaderAsBearerToken(), // Fallback to Authorization header
+      ]),
+      ignoreExpiration: false,
+      secretOrKey: configService.get<string>('JWT_SECRET'),
+    });
+  }
 
-    async validate(payload: any) {
-        // The object you return here is attached to req.user
-        return { email: payload.email, role: payload.role };
-    }
+  async validate(payload: any) {
+    // The object you return here is attached to req.user
+    return { email: payload.email, role: payload.role };
+  }
 }

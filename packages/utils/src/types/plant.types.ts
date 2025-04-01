@@ -23,6 +23,7 @@ export interface Plant {
     maintenance: string;
     watering: string;
     tags: string[];
+    planterVariants: plantVariantType[];
 }
 
 export interface catalogInPlant {
@@ -53,4 +54,55 @@ export interface PlantsCatalogReponse {
 export interface PlanterVariant {
     planterSku: string;
     images: string[];
+}
+
+export interface plantVariantType {
+    planterSku: string;
+    images: string[];
+}
+
+export interface PlantsCatalogReponse {
+    data: catalogPlantResponse[],
+    page: number;
+    limit: number;
+    total: number
+}
+
+
+// export interface AvailablePlanterVariant {
+//     planterSku: string;
+//     planterName: string;
+//     planterSeries: string;
+//     size: "small" | "medium" | "large" | "extra-large";
+//     color: { hex: string, name: string };
+// }
+
+export interface Dimensions {
+    height: string;
+    length: string;
+    width: string;
+}
+
+export interface Color {
+    hex: string;
+    name: string;
+}
+
+export interface AvailablePlanterVariant {
+    planterCategory: string;
+    planterSeries: string;
+    price: string;
+    color: Color;
+    description: string;
+    size: string;
+    dimensions: Dimensions;
+    sku: string;
+    images: string[];
+    _id: string;
+}
+
+
+export interface PlantFamilyReponse {
+    _id: string;
+    totalCount: number
 }

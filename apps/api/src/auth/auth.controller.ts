@@ -1,11 +1,5 @@
 // src/auth/auth.controller.ts
-import {
-    Controller,
-    Get,
-    Req,
-    Res,
-    UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { GoogleAuthGuard } from './google.guard';
@@ -16,43 +10,42 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-    constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService) {}
 
-    @Get('google')
-    @ApiOperation({ summary: 'Redirects to Google OAuth2.0' })
-    @UseGuards(GoogleAuthGuard)
-    async googleAuth() {
-    }
+  @Get('google')
+  @ApiOperation({ summary: 'Redirects to Google OAuth2.0' })
+  @UseGuards(GoogleAuthGuard)
+  async googleAuth() {}
 
-    @Get('google/callback')
-    @ApiOperation({ summary: 'Redirects to Google OAuth2.0 callback' })
-    @UseGuards(GoogleAuthGuard)
-    async googleAuthRedirect(@Req() req: Request, @Res() res: Response) {
-        const user = req.user as any; // from the GoogleStrategy validate()
-        const jwt = await this.authService.generateJwt(user);
+  @Get('google/callback')
+  @ApiOperation({ summary: 'Redirects to Google OAuth2.0 callback' })
+  @UseGuards(GoogleAuthGuard)
+  async googleAuthRedirect(@Req() req: Request, @Res() res: Response) {
+    const user = req.user as any; // from the GoogleStrategy validate()
+    const jwt = await this.authService.generateJwt(user);
 
-        res.cookie('token', jwt, {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'strict',
-        });
-        return res.redirect(`${process.env.ADMIN_CONSOLE_URL}/auth_loading`);
-    }
+    res.cookie('token', jwt, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+    });
+    return res.redirect(`${process.env.ADMIN_CONSOLE_URL}/auth-loading`);
+  }
 
-    @Get('me')
-    @ApiOperation({ summary: 'Retrieves the current user' })
-    @UseGuards(JwtAuthGuard)
-    async getMe(@Req() req: RequestWithUser) {
-        return {
-            email: req.user['email'],
-            role: req.user['role'],
-        };
-    }
+  @Get('me')
+  @ApiOperation({ summary: 'Retrieves the current user' })
+  @UseGuards(JwtAuthGuard)
+  async getMe(@Req() req: RequestWithUser) {
+    return {
+      email: req.user['email'],
+      role: req.user['role'],
+    };
+  }
 
-    @Get('sample-bearer-token')
-    @ApiOperation({ summary: 'Retrieves a sample bearer token' })
-    async getSampleBearerToken() {
-        const token = await this.authService.generateAppToken();
-        return { token };
-    }
+  @Get('sample-bearer-token')
+  @ApiOperation({ summary: 'Retrieves a sample bearer token' })
+  async getSampleBearerToken() {
+    const token = await this.authService.generateAppToken();
+    return { token };
+  }
 }

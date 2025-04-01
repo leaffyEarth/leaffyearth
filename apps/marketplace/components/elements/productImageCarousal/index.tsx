@@ -79,8 +79,8 @@ const ProductImageCarousel = ({ product }: { product: catalogInPlant }) => {
                 />
                 {
                     product?.images?.filter((fruit, index) => {
-                        let startIndex = page * 4
-                        let endIndex = startIndex + 4
+                        const startIndex = page * 4
+                        const endIndex = startIndex + 4
                         const arraySize = product?.images?.length
 
                         if (startIndex > arraySize - 1) {

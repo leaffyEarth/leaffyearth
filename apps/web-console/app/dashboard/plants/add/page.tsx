@@ -40,7 +40,7 @@ interface FormData {
   description: string;
   size: string;
   dimensions: Dimensions;
-  type: string[],
+  type: string[];
   lightExposure: string | null;
   idealLocation: string[];
   maintenance: string | null;
@@ -71,6 +71,14 @@ export default function AddPlantPage() {
     tags: [],
   });
   const [error, setError] = useState<string>();
+  const [plantNameError, setPlantNameError] = useState<string>();
+  const [plantSeriesError, setPlantSeriesError] = useState<string>();
+  const [priceError, setPriceError] = useState<string>();
+  const [dimensionErrors, setDimensionErrors] = useState({
+    height: "",
+    length: "",
+    width: "",
+  });
   const [loading, setLoading] = useState<boolean>();
 
   const [plantFamilyNames, setPlantFamilyNames] = useState<string[]>([]);
@@ -82,9 +90,11 @@ export default function AddPlantPage() {
   const getAllPlantFamilies = async () => {
     try {
       const { data } = await api.get("/plants/series");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const familyNames = data.map((item: any) => item._id);
       setPlantFamilyNames(familyNames);
-    } catch (err) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
       console.error("Failed to fetch plant families", err);
     }
   };
@@ -92,9 +102,53 @@ export default function AddPlantPage() {
   // -----------------------------
   // 3) Handlers
   // -----------------------------
-  const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  const handleInputChangePlantName = (
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
+    const { name, value } = event.target;
+    const isValid =
+      value === "" || /^[A-Za-z]+( [A-Za-z]+)?$/.test(value.trim());
+    if (!isValid) {
+      setPlantNameError("Plant Name must contain exactly one space");
+    } else {
+      setPlantNameError("");
+    }
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleInputChangePlantSeries = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const { name, value } = event.target;
+    const isValid =
+      !/\s{2,}/.test(value.trim()) &&
+      !/^plant\b/i.test(value.trim()) &&
+      !/\bplant\b/i.test(value.trim()) &&
+      /^[a-z\s]*$/.test(value.trim());
+    if (!isValid) {
+      setPlantSeriesError(
+        'Plant Series must not contain continuous spaces or the word "plant" as a prefix or separate word or contain any special characters',
+      );
+    } else {
+      setPlantSeriesError("");
+    }
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleInputChangePrice = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const { name, value } = event.target;
+    const isValid = value === "" || /^[0-9]+$/.test(value);
+    if (!isValid) {
+      setPriceError("Price must be a number and should not contain any spaces");
+    } else {
+      setPriceError("");
+    }
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -104,6 +158,18 @@ export default function AddPlantPage() {
 
   const handleDimensionsChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    const isValid = /^[0-9]*$/.test(value);
+    if (!isValid) {
+      setDimensionErrors((prev) => ({
+        ...prev,
+        [name]: "Dimension must be a number and should not contain any spaces",
+      }));
+    } else {
+      setDimensionErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+    }
     setFormData((prev) => ({
       ...prev,
       dimensions: {
@@ -207,12 +273,12 @@ export default function AddPlantPage() {
       });
       setLoading(false);
       router.push("/dashboard/plants");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err?.message || "Failed to save plant");
       setLoading(false);
     }
   };
-
 
   return (
     <Box
@@ -252,11 +318,12 @@ export default function AddPlantPage() {
             {/* PLANT NAME */}
             <TextField
               name="plantName"
-              placeholder="Plant Name"
+              label="Plant Name"
               variant="standard"
               value={formData.plantName}
-              onChange={handleInputChange}
-              required
+              onChange={handleInputChangePlantName}
+              error={!!plantNameError}
+              helperText={plantNameError}
               sx={{
                 "& .MuiInputBase-input": {
                   fontSize: 25,
@@ -290,9 +357,20 @@ export default function AddPlantPage() {
               renderInput={(params) => (
                 <TextField
                   {...params}
+                  onChange={handleInputChangePlantSeries}
                   label="Plant Series"
                   variant="standard"
+                  sx={{
+                    "& .MuiInputBase-input": {
+                      fontSize: 25,
+                    },
+                    "& .MuiInputLabel-root": {
+                      fontSize: 18,
+                    },
+                  }}
                   required
+                  error={!!plantSeriesError}
+                  helperText={plantSeriesError}
                 />
               )}
             />
@@ -302,8 +380,10 @@ export default function AddPlantPage() {
               name="price"
               label="Price"
               value={formData.price}
-              onChange={handleInputChange}
+              onChange={handleInputChangePrice}
               required
+              error={!!priceError}
+              helperText={priceError}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -337,7 +417,12 @@ export default function AddPlantPage() {
             />
 
             {/* SELECT FIELDS */}
-            <Stack spacing={6} direction="row" useFlexGap sx={{ flexWrap: "wrap" }}>
+            <Stack
+              spacing={6}
+              direction="row"
+              useFlexGap
+              sx={{ flexWrap: "wrap" }}
+            >
               {/* SIZE SELECT */}
               <FormControl required>
                 <InputLabel>Size</InputLabel>
@@ -372,7 +457,8 @@ export default function AddPlantPage() {
                 >
                   {Object.values(PlantType).map((val) => (
                     <MenuItem key={val} value={val}>
-                      {formData.type.includes(val) ? "✓ " : ""}{val}
+                      {formData.type.includes(val) ? "✓ " : ""}
+                      {val}
                     </MenuItem>
                   ))}
                 </Select>
@@ -412,7 +498,8 @@ export default function AddPlantPage() {
                 >
                   {Object.values(PlantIdealLocationType).map((val) => (
                     <MenuItem key={val} value={val}>
-                      {formData.idealLocation.includes(val) ? "✓ " : ""}{val}
+                      {formData.idealLocation.includes(val) ? "✓ " : ""}
+                      {val}
                     </MenuItem>
                   ))}
                 </Select>
@@ -468,6 +555,8 @@ export default function AddPlantPage() {
                   onChange={handleDimensionsChange}
                   required
                   sx={{ width: "150px" }}
+                  error={!!dimensionErrors.height}
+                  helperText={dimensionErrors.height}
                 />
                 <TextField
                   name="length"
@@ -477,6 +566,8 @@ export default function AddPlantPage() {
                   onChange={handleDimensionsChange}
                   required
                   sx={{ width: "150px" }}
+                  error={!!dimensionErrors.length}
+                  helperText={dimensionErrors.length}
                 />
                 <TextField
                   name="width"
@@ -486,6 +577,8 @@ export default function AddPlantPage() {
                   onChange={handleDimensionsChange}
                   required
                   sx={{ width: "150px" }}
+                  error={!!dimensionErrors.width}
+                  helperText={dimensionErrors.width}
                 />
               </Box>
             </Box>
@@ -502,7 +595,12 @@ export default function AddPlantPage() {
               color="primary"
               onClick={handleSubmit}
               disabled={loading}
-              sx={{ width: "400px", height: "60px", alignSelf: "flex-end", mb: "24px" }}
+              sx={{
+                width: "400px",
+                height: "60px",
+                alignSelf: "flex-end",
+                mb: "24px",
+              }}
             >
               {loading ? "Submitting" : "Submit"}
             </Button>

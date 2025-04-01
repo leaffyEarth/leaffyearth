@@ -23,7 +23,7 @@ const CheckoutPage = () => {
                 name: 'My E-Commerce',
                 description: 'Purchase Description',
                 order_id: orderId,
-
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 handler: async function (response: any) {
                     const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = response;
 
@@ -48,8 +48,9 @@ const CheckoutPage = () => {
             };
 
             console.log("options", options)
-
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const rzp = new (window as any).Razorpay(options);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             rzp.on('payment.failed', function (response: any) {
                 console.error('Payment Failed:', response.error);
                 alert('Payment Failed: ' + response.error.description);

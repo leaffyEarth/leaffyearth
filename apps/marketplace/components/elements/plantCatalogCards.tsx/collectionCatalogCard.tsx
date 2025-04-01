@@ -13,7 +13,7 @@ export default function PlantCollectionCatalogCard({ Plant }: { Plant?: catalogP
     }
 
 
-    let plantDetailPath = Plant._id.replace(/\s+/g, '-');
+    const plantDetailPath = Plant._id.replace(/\s+/g, '-');
 
     let thumbnail = ''
     let price = 0

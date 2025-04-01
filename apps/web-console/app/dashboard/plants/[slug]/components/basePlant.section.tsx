@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import { api } from "@/services/api";
-import { PlantResponseData } from "@/types/response.types";
+import { PlantResponseData } from "@leaffyearth/utils/src/types/response.types";
 import PlantImageCarousel from "@/components/plantImageCarousel/plantImageCarousel";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import { useRouter } from "next/navigation";
@@ -52,11 +52,25 @@ interface FormData {
   tags: string[];
 }
 
-export default function PlantDetailSection({ PlantDetails, OnChange }: { PlantDetails: PlantResponseData, OnChange: () => void }) {
+export default function PlantDetailSection({
+  PlantDetails,
+  OnChange,
+}: {
+  PlantDetails: PlantResponseData;
+  OnChange: () => void;
+}) {
   const router = useRouter();
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [editable, setEditable] = useState<boolean>(false);
+  const [plantNameError, setPlantNameError] = useState<string>();
+  const [plantSeriesError, setPlantSeriesError] = useState<string>();
+  const [priceError, setPriceError] = useState<string>();
+  const [dimensionErrors, setDimensionErrors] = useState({
+    height: "",
+    length: "",
+    width: "",
+  });
   const [plantFamilyNames, setPlantFamilyNames] = useState<string[]>([]);
 
   // The main form data
@@ -79,7 +93,6 @@ export default function PlantDetailSection({ PlantDetails, OnChange }: { PlantDe
     tags: PlantDetails.tags || [],
   });
 
-
   // Fetch all families once
   useEffect(() => {
     getAllPlantFamilies();
@@ -87,24 +100,94 @@ export default function PlantDetailSection({ PlantDetails, OnChange }: { PlantDe
 
   // 2) Functions
 
-
   const getAllPlantFamilies = async () => {
     try {
       // example endpoint that returns: [{ _id: 'MonsteraSeries', totalCount: 3 }, ...]
       const { data } = await api.get(`/plants/series`);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const familyNames = data.map((item: any) => item._id); // or item.name
       setPlantFamilyNames(familyNames);
-    } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
       console.log("Failed to fetch plant families", error);
     }
   };
 
   // For standard text changes (non-Autocomplete)
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChangePlantName = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const { name, value } = event.target;
+    const isValid =
+      value === "" || /^[A-Za-z]+( [A-Za-z]+)?$/.test(value.trim());
+    if (!isValid) {
+      setPlantNameError("Plant Name must contain exactly one space");
+    } else {
+      setPlantNameError("");
+    }
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleInputChangePlantSeries = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const { name, value } = event.target;
+    const isValid =
+      !/\s{2,}/.test(value.trim()) &&
+      !/^plant\b/i.test(value.trim()) &&
+      !/\bplant\b/i.test(value.trim()) &&
+      /^[a-z\s]*$/.test(value.trim());
+    if (!isValid) {
+      setPlantSeriesError(
+        'Plant Series must not contain continuous spaces or the word "plant" as a prefix or separate word or contain any special characters',
+      );
+    } else {
+      setPlantSeriesError("");
+    }
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleInputChangePrice = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const { name, value } = event.target;
+    const isValid = value === "" || /^[0-9]+$/.test(value);
+    if (!isValid) {
+      setPriceError("Price must be a number and should not contain any spaces");
+    } else {
+      setPriceError("");
+    }
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
+    }));
+  };
+
+  const handleDimensionsChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const isValid = /^[0-9]*$/.test(value);
+    if (!isValid) {
+      setDimensionErrors((prev) => ({
+        ...prev,
+        [name]: "Dimension must be a number and should not contain any spaces",
+      }));
+    } else {
+      setDimensionErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+    }
+    setFormData((prev) => ({
+      ...prev,
+      dimensions: {
+        ...prev.dimensions,
+        [name]: value,
+      },
     }));
   };
 
@@ -116,17 +199,16 @@ export default function PlantDetailSection({ PlantDetails, OnChange }: { PlantDe
     }));
   };
 
-  const handleDimensionsChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      dimensions: {
-        ...prev.dimensions,
-        [name]: value,
-      },
-    }));
-  };
-
+  // const handleDimensionsChange = (e: ChangeEvent<HTMLInputElement>) => {
+  //   const { name, value } = e.target;
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     dimensions: {
+  //       ...prev.dimensions,
+  //       [name]: value,
+  //     },
+  //   }));
+  // };
 
   // const handleTypeChange = (e: SelectChangeEvent<string>) => {
   //   setFormData((prev) => ({
@@ -135,6 +217,7 @@ export default function PlantDetailSection({ PlantDetails, OnChange }: { PlantDe
   //   }));
   // };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handlePlantSeriesInputChange = (event: any, newValue: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -174,11 +257,9 @@ export default function PlantDetailSection({ PlantDetails, OnChange }: { PlantDe
     const { value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      tags: typeof value === 'string' ? value.split(',') : value,
+      tags: typeof value === "string" ? value.split(",") : value,
     }));
   };
-
-
 
   const handleSubmit = async () => {
     if (
@@ -216,6 +297,7 @@ export default function PlantDetailSection({ PlantDetails, OnChange }: { PlantDe
       });
       await OnChange();
       setEditable(false);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err?.message || "Failed to save plant");
     } finally {
@@ -233,7 +315,12 @@ export default function PlantDetailSection({ PlantDetails, OnChange }: { PlantDe
         gap: "36px",
       }}
     >
-      <Stack spacing={5} direction="row" useFlexGap sx={{ flexWrap: "wrap", mb: "24px" }}>
+      <Stack
+        spacing={5}
+        direction="row"
+        useFlexGap
+        sx={{ flexWrap: "wrap", mb: "24px" }}
+      >
         {/* Left side: image carousel and "upload-image" button */}
         <Stack spacing={2} sx={{ width: "40%" }}>
           {PlantDetails && <PlantImageCarousel plant={PlantDetails} />}
@@ -241,9 +328,14 @@ export default function PlantDetailSection({ PlantDetails, OnChange }: { PlantDe
             variant="contained"
             color="primary"
             onClick={() => router.push(`${PlantDetails?._id}/upload-image`)}
-            sx={{ width: "400px", height: "50px", alignSelf: "flex-end" }}
+            sx={{
+              width: { xs: "100%", sm: "80%" },
+              height: "50px",
+              alignSelf: { xs: "center", sm: "flex-end" },
+              ml: "200px",
+            }}
           >
-            Edit
+            Add or Edit Image
           </Button>
         </Stack>
 
@@ -259,17 +351,20 @@ export default function PlantDetailSection({ PlantDetails, OnChange }: { PlantDe
           {/* PLANT NAME */}
           <TextField
             name="plantName"
-            placeholder="Plant Name"
-            disabled={!editable}
+            label="Plant Name"
             variant="standard"
             value={formData.plantName}
+            onChange={handleInputChangePlantName}
+            error={!!plantNameError}
+            helperText={plantNameError}
+            disabled={!editable}
             required
             sx={{
               "& .MuiInputBase-input": {
-                fontSize: 45,
+                fontSize: 25,
               },
               "& .MuiInputLabel-root": {
-                fontSize: 45,
+                fontSize: 18,
               },
             }}
           />
@@ -285,19 +380,41 @@ export default function PlantDetailSection({ PlantDetails, OnChange }: { PlantDe
                 <TextField
                   {...params}
                   label="Plant Series"
+                  onChange={handleInputChangePlantSeries}
                   variant="standard"
+                  sx={{
+                    "& .MuiInputBase-input": {
+                      fontSize: 25,
+                    },
+                    "& .MuiInputLabel-root": {
+                      fontSize: 18,
+                    },
+                  }}
                   required
+                  error={!!plantSeriesError}
+                  helperText={plantSeriesError}
                 />
               )}
             />
           ) : (
             <TextField
               name="plantSeries"
-              placeholder="Plant Series"
               disabled={!editable}
               variant="standard"
+              label="Plant Series"
+              sx={{
+                "& .MuiInputBase-input": {
+                  fontSize: 25,
+                },
+                "& .MuiInputLabel-root": {
+                  fontSize: 18,
+                },
+              }}
               value={formData.plantSeries}
               required
+              onChange={handleInputChangePlantSeries}
+              error={!!plantSeriesError}
+              helperText={plantSeriesError}
             />
           )}
 
@@ -307,7 +424,9 @@ export default function PlantDetailSection({ PlantDetails, OnChange }: { PlantDe
             label="Price"
             disabled={!editable}
             value={formData.price}
-            onChange={handleInputChange}
+            onChange={handleInputChangePrice}
+            error={!!priceError}
+            helperText={priceError}
             required
             InputProps={{
               startAdornment: (
@@ -346,7 +465,7 @@ export default function PlantDetailSection({ PlantDetails, OnChange }: { PlantDe
             spacing={6}
             direction="row"
             useFlexGap
-            sx={{ flexWrap: 'wrap' }}
+            sx={{ flexWrap: "wrap" }}
           >
             {/* SIZE SELECT */}
             <FormControl required>
@@ -366,7 +485,6 @@ export default function PlantDetailSection({ PlantDetails, OnChange }: { PlantDe
                 <MenuItem value="extra-large">Extra Large</MenuItem>
               </Select>
             </FormControl>
-
 
             {/* TYPE SELECT */}
             <FormControl>
@@ -388,22 +506,20 @@ export default function PlantDetailSection({ PlantDetails, OnChange }: { PlantDe
               >
                 {Object.values(PlantType).map((val) => (
                   <MenuItem key={val} value={val}>
-                    {formData.type.includes(val) ? "✓ " : ""}{val}
+                    {formData.type.includes(val) ? "✓ " : ""}
+                    {val}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
-
           </Stack>
 
           <Stack
             spacing={6}
             direction="row"
             useFlexGap
-            sx={{ flexWrap: 'wrap' }}
+            sx={{ flexWrap: "wrap" }}
           >
-
-
             {/* LIGHT EXPOSURE SELECT */}
             <FormControl>
               <InputLabel>Light Exposure</InputLabel>
@@ -444,22 +560,20 @@ export default function PlantDetailSection({ PlantDetails, OnChange }: { PlantDe
               >
                 {Object.values(PlantIdealLocationType).map((val) => (
                   <MenuItem key={val} value={val}>
-                    {formData.idealLocation.includes(val) ? "✓ " : ""}{val}
+                    {formData.idealLocation.includes(val) ? "✓ " : ""}
+                    {val}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
-
           </Stack>
 
           <Stack
             spacing={6}
             direction="row"
             useFlexGap
-            sx={{ flexWrap: 'wrap' }}
+            sx={{ flexWrap: "wrap" }}
           >
-
-
             {/* MAINTENANCE SELECT */}
             <FormControl>
               <InputLabel>Maintenance</InputLabel>
@@ -501,7 +615,6 @@ export default function PlantDetailSection({ PlantDetails, OnChange }: { PlantDe
             </FormControl>
           </Stack>
 
-
           {/* TAGS */}
           <FormControl>
             <InputLabel>Tags</InputLabel>
@@ -521,7 +634,6 @@ export default function PlantDetailSection({ PlantDetails, OnChange }: { PlantDe
               ))}
             </Select>
           </FormControl>
-
 
           {/* DIMENSIONS */}
           <Box>
@@ -543,6 +655,8 @@ export default function PlantDetailSection({ PlantDetails, OnChange }: { PlantDe
                 sx={{
                   width: "150px",
                 }}
+                error={!!dimensionErrors.height}
+                helperText={dimensionErrors.height}
               />
               <TextField
                 name="length"
@@ -555,6 +669,8 @@ export default function PlantDetailSection({ PlantDetails, OnChange }: { PlantDe
                 sx={{
                   width: "150px",
                 }}
+                error={!!dimensionErrors.length}
+                helperText={dimensionErrors.length}
               />
               <TextField
                 name="width"
@@ -567,6 +683,8 @@ export default function PlantDetailSection({ PlantDetails, OnChange }: { PlantDe
                 sx={{
                   width: "150px",
                 }}
+                error={!!dimensionErrors.width}
+                helperText={dimensionErrors.width}
               />
             </Box>
           </Box>
@@ -579,7 +697,11 @@ export default function PlantDetailSection({ PlantDetails, OnChange }: { PlantDe
 
           {/* Editable Action Buttons */}
           {editable && (
-            <Stack direction="row" spacing={2} sx={{ alignSelf: "flex-end", mb: "24px" }}>
+            <Stack
+              direction="row"
+              spacing={2}
+              sx={{ alignSelf: "flex-end", mb: "24px" }}
+            >
               <Button
                 variant="text"
                 color="primary"
@@ -607,7 +729,12 @@ export default function PlantDetailSection({ PlantDetails, OnChange }: { PlantDe
               color="primary"
               onClick={() => setEditable(true)}
               disabled={loading}
-              sx={{ width: "400px", height: "60px", alignSelf: "flex-end", mb: "24px" }}
+              sx={{
+                width: "400px",
+                height: "60px",
+                alignSelf: "flex-end",
+                mb: "24px",
+              }}
             >
               Edit
             </Button>

@@ -1,4 +1,4 @@
-export enum plantCategoryEnum {
+export enum planterCategoryEnum {
     terracotta_Planters = "Terracotta Planters",
     ceramic_planters = "Ceramic Planters",
     plastic_planters = "Plastic Planters",

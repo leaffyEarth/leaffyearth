@@ -1,15 +1,10 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Button,
-  Typography,
-  Stack
-} from '@mui/material';
-import { api } from '@/services/api';
-import { PlantResponseData } from '@/types/response.types';
-import EditablePlantImageCarousel from '@/components/plantImageCarousel/editablePlantImageCarousel';
+import React, { useEffect, useState } from "react";
+import { Box, Button, Typography, Stack } from "@mui/material";
+import { api } from "@/services/api";
+import { PlantResponseData } from "@leaffyearth/utils/src/types/response.types";
+import EditablePlantImageCarousel from "@/components/plantImageCarousel/editablePlantImageCarousel";
 
 interface PlantParams {
   slug: string;
@@ -19,12 +14,12 @@ interface PlantDetailPageProps {
   params: Promise<PlantParams>;
 }
 
-
-
 export default function PlantDetailPage({ params }: PlantDetailPageProps) {
   // Plant details
   const [plantId, setPlantId] = useState<string | null>(null);
-  const [plantDetails, setPlantDetails] = useState<PlantResponseData | null>(null);
+  const [plantDetails, setPlantDetails] = useState<PlantResponseData | null>(
+    null,
+  );
 
   // Multi-file upload
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -34,11 +29,9 @@ export default function PlantDetailPage({ params }: PlantDetailPageProps) {
   // Loading state
   const [loading, setLoading] = useState<boolean>(false);
 
-
   useEffect(() => {
     getPlantProp();
   }, []);
-
 
   useEffect(() => {
     if (plantId) {
@@ -46,12 +39,10 @@ export default function PlantDetailPage({ params }: PlantDetailPageProps) {
     }
   }, [plantId]);
 
-
   const getPlantProp = async (): Promise<void> => {
     const { slug } = await params;
     setPlantId(slug.toUpperCase());
   };
-
 
   const getPlantDetails = async (): Promise<void> => {
     if (!plantId) return;
@@ -60,35 +51,32 @@ export default function PlantDetailPage({ params }: PlantDetailPageProps) {
       const response = await api.get<PlantResponseData>(`/plants/${plantId}`);
       setPlantDetails(response.data);
     } catch (error) {
-      console.error('Error fetching plant details:', error);
+      console.error("Error fetching plant details:", error);
     }
   };
 
-
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+  const handleFileChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ): void => {
     if (event.target.files && event.target.files.length > 0) {
       const files = Array.from(event.target.files);
       setSelectedFiles(files);
 
-      const urls = files.map(file => URL.createObjectURL(file));
+      const urls = files.map((file) => URL.createObjectURL(file));
       setPreviewUrls(urls);
     }
   };
-
 
   const handleDrag = (e: React.DragEvent<HTMLDivElement>): void => {
     e.preventDefault();
     e.stopPropagation();
 
-    if (e.type === 'dragenter' || e.type === 'dragover') {
+    if (e.type === "dragenter" || e.type === "dragover") {
       setDragActive(true);
-    } else if (e.type === 'dragleave') {
+    } else if (e.type === "dragleave") {
       setDragActive(false);
     }
   };
-
-
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>): void => {
     e.preventDefault();
@@ -100,13 +88,14 @@ export default function PlantDetailPage({ params }: PlantDetailPageProps) {
       setSelectedFiles(files);
 
       // Generate preview URLs
-      const urls = files.map(file => URL.createObjectURL(file));
+      const urls = files.map((file) => URL.createObjectURL(file));
       setPreviewUrls(urls);
     }
   };
 
-
-  const handleImageUpload = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
+  const handleImageUpload = async (
+    event: React.FormEvent<HTMLFormElement>,
+  ): Promise<void> => {
     event.preventDefault();
 
     if (!selectedFiles.length || !plantId) return;
@@ -114,14 +103,13 @@ export default function PlantDetailPage({ params }: PlantDetailPageProps) {
     setLoading(true);
 
     try {
-
       for (const file of selectedFiles) {
         const formData = new FormData();
-        formData.append('file', file);
+        formData.append("file", file);
 
         await api.post(`/plants/${plantId}/upload-image`, formData, {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
           },
         });
       }
@@ -131,30 +119,29 @@ export default function PlantDetailPage({ params }: PlantDetailPageProps) {
       setSelectedFiles([]);
       setPreviewUrls([]);
     } catch (error) {
-      console.error('Error uploading images:', error);
+      console.error("Error uploading images:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const openFileDialog = (): void => {
-    document.getElementById('input-file-upload')?.click();
+    document.getElementById("input-file-upload")?.click();
   };
 
   return (
     <Box
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        width: '100%',
-        gap: '36px',
-        pb: 5
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+        gap: "36px",
+        pb: 5,
       }}
     >
-
       <Box
         sx={{
-          display: 'flex',
+          display: "flex",
         }}
       >
         <Typography variant="h5" gutterBottom sx={{ fontWeight: 500 }}>
@@ -162,18 +149,18 @@ export default function PlantDetailPage({ params }: PlantDetailPageProps) {
         </Typography>
       </Box>
 
-      <Stack
-        spacing={5}
-        direction="row"
-        useFlexGap
-        sx={{ flexWrap: 'wrap' }}
-      >
+      <Stack spacing={5} direction="row" useFlexGap sx={{ flexWrap: "wrap" }}>
         <Box
           sx={{
-            width: '40%'
+            width: "40%",
           }}
         >
-          {plantDetails && <EditablePlantImageCarousel plant={plantDetails} onChange={getPlantDetails} />}
+          {plantDetails && (
+            <EditablePlantImageCarousel
+              plant={plantDetails}
+              onChange={getPlantDetails}
+            />
+          )}
         </Box>
 
         <Box
@@ -181,21 +168,19 @@ export default function PlantDetailPage({ params }: PlantDetailPageProps) {
           onSubmit={handleImageUpload}
           sx={{
             flexGrow: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 2
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
           }}
         >
-
           <input
             id="input-file-upload"
             type="file"
             multiple
             accept="image/*"
-            style={{ display: 'none' }}
+            style={{ display: "none" }}
             onChange={handleFileChange}
           />
-
 
           <Box
             onClick={openFileDialog}
@@ -204,14 +189,14 @@ export default function PlantDetailPage({ params }: PlantDetailPageProps) {
             onDragLeave={handleDrag}
             onDrop={handleDrop}
             sx={{
-              border: '2px dashed #ccc',
-              borderRadius: '4px',
-              padding: '24px',
-              textAlign: 'center',
-              cursor: 'pointer',
+              border: "2px dashed #ccc",
+              borderRadius: "4px",
+              padding: "24px",
+              textAlign: "center",
+              cursor: "pointer",
               ...(dragActive && {
-                backgroundColor: 'rgba(0, 0, 0, 0.04)',
-                borderColor: 'primary.main',
+                backgroundColor: "rgba(0, 0, 0, 0.04)",
+                borderColor: "primary.main",
               }),
             }}
           >
@@ -223,29 +208,27 @@ export default function PlantDetailPage({ params }: PlantDetailPageProps) {
             </Typography>
           </Box>
 
-
           {previewUrls.length > 0 && (
             <Box mt={2}>
-              <Stack direction='row' spacing={2} flexWrap="wrap">
+              <Stack direction="row" spacing={2} flexWrap="wrap">
                 {previewUrls.map((url, index) => (
                   <Box
                     key={url}
                     sx={{
-                      textAlign: 'center',
-                      display: 'flex',
-                      flexDirection: 'column'
+                      textAlign: "center",
+                      display: "flex",
+                      flexDirection: "column",
                     }}
                   >
-
                     <Box
                       component="img"
                       src={url}
                       alt={`preview-${index}`}
                       sx={{
-                        width: '150px',
-                        borderRadius: '4px',
+                        width: "150px",
+                        borderRadius: "4px",
                         marginTop: 1,
-                        objectFit: 'cover',
+                        objectFit: "cover",
                       }}
                     />
                     <Typography variant="caption" gutterBottom>
@@ -257,28 +240,21 @@ export default function PlantDetailPage({ params }: PlantDetailPageProps) {
             </Box>
           )}
 
-
           <Button
             type="submit"
             variant="contained"
             color="primary"
             disabled={!selectedFiles.length || loading}
             sx={{
-              alignSelf: 'flex-end',
-              width: '150px',
-              height: '50px',
+              alignSelf: "flex-end",
+              width: "150px",
+              height: "50px",
             }}
           >
-            {loading ? 'Uploading...' : 'Upload'}
+            {loading ? "Uploading..." : "Upload"}
           </Button>
         </Box>
-
       </Stack>
-
-
-
-
-
     </Box>
   );
 }

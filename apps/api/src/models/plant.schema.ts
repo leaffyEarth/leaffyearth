@@ -90,7 +90,7 @@ export class Plant {
     sku!: string;
 
     @Prop({ type: [PlantsPlanterVariantsSchema], default: [] })
-    planterVariants!: PlantsPlanterVariants[]
+    planterVariants?: PlantsPlanterVariants[]
 
 }
 

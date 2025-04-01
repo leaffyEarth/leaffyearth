@@ -1,33 +1,48 @@
 // src/pots/dto/create-pot.dto.ts
-import { IsString, IsNotEmpty, IsNumber, IsEnum, IsOptional, ValidateNested, Matches } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsNumber,
+  IsEnum,
+  IsOptional,
+  ValidateNested,
+  // Matches,
+} from 'class-validator';
 import { sizeEnum } from '@leaffyearth/utils';
 import { DimensionDto } from '../../common/dto/dimension.dto';
 import { Type } from 'class-transformer';
 import { ColorDto } from '../../common/dto/color.dto';
 import { ApiProperty } from '@nestjs/swagger';
-import { plantCategoryEnum } from '@leaffyearth/utils';
+import { planterCategoryEnum } from '@leaffyearth/utils';
 
 export class CreatePotDto {
   @IsString()
   @IsOptional()
-  @ApiProperty({ description: 'Name of the pot', example: 'Terracotta Planter' })
+  @ApiProperty({
+    description: 'Name of the pot',
+    example: 'Terracotta Planter',
+  })
   name!: string;
 
-  @IsEnum(plantCategoryEnum, {
-    message: `Planter Category must be one of ${Object.values(plantCategoryEnum).join(', ')}`,
+  @IsEnum(planterCategoryEnum, {
+    message: `Planter Category must be one of ${Object.values(planterCategoryEnum).join(', ')}`,
   })
-  @ApiProperty({ description: 'Planter Category', example: 'Terracotta Planters' })
-  planterCategory!: plantCategoryEnum;
+  @ApiProperty({
+    description: 'Planter Category',
+    example: 'Terracotta Planters',
+  })
+  planterCategory!: planterCategoryEnum;
 
   @IsString()
-  @IsNotEmpty()
   @ApiProperty({ description: 'Planter Series', example: 'spring' })
-  @Matches(/^[a-z]+$/, { message: 'Planter Series must be lowercase only' })
   planterSeries!: string;
 
   @IsString()
   @IsOptional()
-  @ApiProperty({ description: 'Description of the pot', example: 'A beautiful pot' })
+  @ApiProperty({
+    description: 'Description of the pot',
+    example: 'A beautiful pot',
+  })
   description!: string;
 
   @IsEnum(sizeEnum, {
@@ -43,7 +58,10 @@ export class CreatePotDto {
 
   @ValidateNested()
   @Type(() => ColorDto)
-  @ApiProperty({ description: 'Color information for the planter variant', type: ColorDto })
+  @ApiProperty({
+    description: 'Color information for the planter variant',
+    type: ColorDto,
+  })
   color!: ColorDto;
 
   @IsNumber()

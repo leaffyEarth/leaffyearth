@@ -7,14 +7,8 @@ import { AzureBlobModule } from '../azure-blob/azure-blob.module';
 import { PlantersModule } from '../pots/planter.module';
 
 @Module({
-    imports: [
-        ModelsModule,
-        CommonModule,
-        AzureBlobModule,
-        PlantersModule
-    ],
-    controllers: [PlantsController],
-    providers: [PlantsService],
+  imports: [ModelsModule, CommonModule, AzureBlobModule, PlantersModule],
+  controllers: [PlantsController],
+  providers: [PlantsService],
 })
-export class PlantsModule { }
-
+export class PlantsModule {}

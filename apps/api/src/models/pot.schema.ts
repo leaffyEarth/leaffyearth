@@ -2,7 +2,7 @@
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { plantCategoryEnum, sizeEnum } from '@leaffyearth/utils';
+import { planterCategoryEnum, sizeEnum } from '@leaffyearth/utils';
 
 export type PotDocument = Pot & Document;
 
@@ -11,7 +11,7 @@ export class Pot {
     @Prop({ required: true })
     name!: string;          // e.g.,
 
-    @Prop({ required: true, enum: Object.values(plantCategoryEnum) })
+    @Prop({ required: true, enum: Object.values(planterCategoryEnum) })
     planterCategory!: string;         // e.g., "Terracotta Planters/Ceramic Planters"
 
     @Prop({ required: true })

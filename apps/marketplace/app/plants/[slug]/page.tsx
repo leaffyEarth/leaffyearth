@@ -18,7 +18,7 @@ interface PageProps {
 export default async function PlantProductPage({ params, searchParams }: PageProps) {
 
     const { slug } = await params;
-    let variant: PlantVarient = await searchParams;
+    const variant: PlantVarient = await searchParams;
 
 
     const getPlantDetails = async () => {

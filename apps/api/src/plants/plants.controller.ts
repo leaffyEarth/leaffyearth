@@ -1,4 +1,16 @@
-import { Controller, Get, Query, Post, Body, Param, Patch, Delete, UseInterceptors, UploadedFile, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Query,
+  Post,
+  Body,
+  Param,
+  Patch,
+  Delete,
+  UseInterceptors,
+  UploadedFile,
+  UseGuards,
+} from '@nestjs/common';
 import { PlantsService } from './plants.service';
 import { CreatePlantDto } from './dto/create-plant.dto';
 import { QueryPlantsDto } from './dto/query-plants.dto';
@@ -6,16 +18,17 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdatePlantDto } from './dto/update-plant.dto';
 import { PlantFamilyQuery } from './dto/plant-family-query.dto';
 import { QuerySeriedDto } from './dto/query-seried.dto';
-import { PartialUpdatePlanterVariantDto, UpdatePlanterVariantDto } from './dto/update-planter-varients.dto';
+import {
+  PartialUpdatePlanterVariantDto,
+  UpdatePlanterVariantDto,
+} from './dto/update-planter-varients.dto';
 import { ApiOperation } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt.guard';
-import { JwtBearerAuthGuard } from '../auth/jwt-bearer.guard';
+// import { JwtAuthGuard } from '../auth/jwt-bearer.guard';
 
 @Controller('plants')
 export class PlantsController {
-  constructor(
-    private readonly plantsService: PlantsService
-  ) { }
+  constructor(private readonly plantsService: PlantsService) {}
 
   @Post()
   @ApiOperation({ summary: 'Creates a new plant' })
@@ -28,12 +41,12 @@ export class PlantsController {
   @ApiOperation({
     summary: 'Retrieves all plants based on the provided query parameters',
   })
-  @UseGuards(JwtBearerAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async findAll(@Query() query: QueryPlantsDto) {
     return this.plantsService.findAll(query);
   }
 
-  @UseGuards(JwtBearerAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('series')
   @ApiOperation({
     summary: 'Retrieves all series based on the provided query parameters',
@@ -42,7 +55,7 @@ export class PlantsController {
     return this.plantsService.findAllPlantFamily(query);
   }
 
-  @UseGuards(JwtBearerAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('collection')
   @ApiOperation({
     summary: 'Retrieves all series based on the provided query parameters',
@@ -55,7 +68,7 @@ export class PlantsController {
   @ApiOperation({
     summary: 'Retrieves a specific series by its ID.',
   })
-  @UseGuards(JwtBearerAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async findOneSeries(@Param('id') id: string, @Query() query: QuerySeriedDto) {
     return this.plantsService.findOneSeries(id, query);
   }
@@ -64,14 +77,14 @@ export class PlantsController {
   @ApiOperation({
     summary: 'Retrieves all planter variants',
   })
-  @UseGuards(JwtBearerAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async findAllPlanterVariants() {
     return this.plantsService.findAllPlanterVariants();
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Retrieves a specific plant by its ID.' })
-  @UseGuards(JwtBearerAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async findOne(@Param('id') id: string) {
     return this.plantsService.findOne(id);
   }
@@ -180,5 +193,4 @@ export class PlantsController {
       planterSku,
     );
   }
-
 }

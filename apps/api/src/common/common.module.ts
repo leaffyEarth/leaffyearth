@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { SkuService } from './services/sku.service';
 
 @Module({
-    providers: [SkuService],
-    exports: [SkuService], 
+  providers: [SkuService],
+  exports: [SkuService],
 })
-export class CommonModule { }
+export class CommonModule {}

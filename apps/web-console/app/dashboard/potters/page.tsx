@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Box, Button, Typography } from '@mui/material';
-import { useThemeToggle } from '@/ThemeContext';
+import React from "react";
+import { Box, Button, Typography } from "@mui/material";
+import { useThemeToggle } from "@/ThemeContext";
 
 export default function PottersPage() {
   const { mode, toggleTheme } = useThemeToggle();
@@ -20,7 +20,7 @@ export default function PottersPage() {
         <Box
           sx={{
             display: "flex",
-            justifyContent: 'space-between'
+            justifyContent: "space-between",
           }}
         >
           <Typography variant="h5" gutterBottom sx={{ fontWeight: 500 }}>
