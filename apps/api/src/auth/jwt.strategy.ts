@@ -11,7 +11,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        (req: RequestWithCookies) => req?.cookies?.token || null,
+        (req: RequestWithCookies) => {
+          const token = (req?.headers as any)?.authorization?.startsWith('Bearer ') 
+            ? (req?.headers as any)?.authorization?.substring(7) 
+            : req?.cookies?.token || null;
+          return token;
+        },
         ExtractJwt.fromAuthHeaderAsBearerToken(), // Fallback to Authorization header
       ]),
       ignoreExpiration: false,
@@ -20,7 +25,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    // The object you return here is attached to req.user
     return { email: payload.email, role: payload.role };
   }
 }
