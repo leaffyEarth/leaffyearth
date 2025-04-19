@@ -5,10 +5,14 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import { RequestWithCookies } from 'src/common/types.interface';
+import { UsersService } from '../users/user.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    private usersService: UsersService
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (req: RequestWithCookies) => {
@@ -25,6 +29,19 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    return { email: payload.email, role: payload.role };
+    try {
+      // Fetch the user from the database using email
+      const user = await this.usersService.findOneByEmail(payload.email);      
+      // Return the user data with the role from the database
+      return { 
+        email: user.email, 
+        role: user.role,
+        id: (user as any).id // Use id property which is available on Mongoose documents
+      };
+    } catch (error) {
+      console.error('Error fetching user from database:', error);
+      // Fallback to payload data if database fetch fails
+      return { email: payload.email, role: payload.role };
+    }
   }
 }
