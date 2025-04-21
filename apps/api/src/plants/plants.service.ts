@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { CreatePlantDto } from './dto/create-plant.dto';
 import { Plant, PlantDocument } from '../models/plant.schema';
 import { QueryPlantsDto } from './dto/query-plants.dto';
@@ -17,17 +17,19 @@ import { QuerySeriedDto } from './dto/query-seried.dto';
 import {
   PartialUpdatePlanterVariantDto,
   UpdatePlanterVariantDto,
-} from './dto/update-planter-varients.dto';
+} from './dto/update-planter-variant.dto';
 import { CreatePotDto } from '../pots/dto/create-planter.dto';
 import { PlanterService } from '../pots/planter.service';
 import { planterCategoryEnum } from '@leaffyearth/utils';
 import { ColorDto } from '../common/dto/color.dto';
 import { sizeEnum } from '@leaffyearth/utils';
+import { Pot, PotDocument } from '../models/pot.schema';
 
 @Injectable()
 export class PlantsService {
   constructor(
     @InjectModel(Plant.name) private plantModel: Model<PlantDocument>,
+    @InjectModel(Pot.name) private planterModel: Model<PotDocument>,
     private readonly skuService: SkuService,
     private readonly azureBlobService: AzureBlobService,
     private readonly planterService: PlanterService,
@@ -341,61 +343,57 @@ export class PlantsService {
   }
 
   // related to variants
-  async addPlanterVariant(
-    plantId: string,
-    createDto: UpdatePlanterVariantDto,
-  ): Promise<Plant> {
-    // const validVariant = PlanterVariants.find(
-    //     (pv) => pv.planterSku === createDto.planterSku,
-    // );
-
-    // if (!validVariant) {
-    //     throw new BadRequestException(
-    //         `Invalid planterSku '${createDto.planterSku}'.`,
-    //     );
-    // }
+  async addPlanterVariant(plantId: string, createDto: UpdatePlanterVariantDto) {
     const plant = await this.plantModel.findById(plantId);
     if (!plant) {
-      throw new NotFoundException(`Plant with ID '${plantId}' not found.`);
+      throw new NotFoundException('Plant not found');
     }
 
+    // Verify that the planter exists
+    const planter = await this.planterModel.findById(createDto.planter);
+    if (!planter) {
+      throw new NotFoundException('Planter not found');
+    }
+
+    // Check if the planter variant already exists
     const existingVariant = plant.planterVariants?.find(
-      (v) => v.planterSku === createDto.planterSku,
+      variant => variant.planter.toString() === createDto.planter
     );
 
     if (existingVariant) {
-      throw new BadRequestException(
-        `Planter variant with SKU '${createDto.planterSku}' already exists for this plant.`,
-      );
+      throw new ConflictException('This planter variant already exists for this plant');
     }
 
-    plant.planterVariants?.push({
-      planterSku: createDto.planterSku,
-      images: createDto.images || [],
+    // Add the new variant
+    if (!plant.planterVariants) {
+      plant.planterVariants = [];
+    }
+
+    plant.planterVariants.push({
+      planter: new Types.ObjectId(createDto.planter),
+      images: createDto.images || []
     });
 
-    await plant.save();
-
-    return plant;
+    return plant.save();
   }
 
   async updatePlanterVariant(
     updateDto: PartialUpdatePlanterVariantDto,
     plantId: string,
-    planterSku: string,
+    planterId: string,
   ) {
     const plant = await this.plantModel.findById(plantId);
     if (!plant) {
-      throw new NotFoundException(`Plant with ID '${plantId}' not found.`);
+      throw new NotFoundException('Plant not found');
     }
 
     const variant = plant.planterVariants?.find(
-      (v) => v.planterSku === planterSku,
+      (v) => v.planter.toString() === planterId,
     );
 
     if (!variant) {
       throw new NotFoundException(
-        `Planter variant with SKU '${planterSku}' not found in Plant '${plantId}'.`,
+        `Planter variant with ID '${planterId}' not found in Plant '${plantId}'.`,
       );
     }
 
@@ -404,19 +402,19 @@ export class PlantsService {
     await plant.save();
   }
 
-  async deletePlanterVariant(plantId: string, planterSku: string) {
+  async deletePlanterVariant(plantId: string, planterId: string) {
     const plant = await this.plantModel.findById(plantId);
     if (!plant) {
-      throw new NotFoundException(`Plant with ID '${plantId}' not found.`);
+      throw new NotFoundException('Plant not found');
     }
 
     const variantIndex = plant.planterVariants?.findIndex(
-      (v) => v.planterSku === planterSku,
+      (v) => v.planter.toString() === planterId,
     );
 
     if (variantIndex === -1) {
       throw new NotFoundException(
-        `Planter variant with SKU '${planterSku}' not found in Plant '${plantId}'.`,
+        `Planter variant with ID '${planterId}' not found in Plant '${plantId}'.`,
       );
     }
 
@@ -424,21 +422,18 @@ export class PlantsService {
       plant.planterVariants?.splice(variantIndex, 1);
     } else {
       throw new NotFoundException(
-        `Planter variant with SKU '${planterSku}' not found in Plant '${plantId}'.`,
+        `Planter variant with ID '${planterId}' not found in Plant '${plantId}'.`,
       );
     }
 
-    // Save the updated Plant document
     await plant.save();
   }
 
   async uploadPlanterVariantImages(
     plantId: string,
-    planterSku: string,
+    planterId: string,
     file: Express.Multer.File,
   ): Promise<void> {
-    console.log('blobUrl file check');
-
     if (!file) {
       throw new BadRequestException('No file provided.');
     }
@@ -446,16 +441,16 @@ export class PlantsService {
     const blobUrl = await this.azureBlobService.uploadPlantImage(file, plantId);
     const plant = await this.plantModel.findById(plantId);
     if (!plant) {
-      throw new NotFoundException(`Plant with ID '${plantId}' not found.`);
+      throw new NotFoundException('Plant not found');
     }
 
     const variant = plant.planterVariants?.find(
-      (v) => v.planterSku === planterSku,
+      (v) => v.planter.toString() === planterId,
     );
 
     if (!variant) {
       throw new NotFoundException(
-        `Planter variant with SKU '${planterSku}' not found in Plant '${plantId}'.`,
+        `Planter variant with ID '${planterId}' not found in Plant '${plantId}'.`,
       );
     }
 

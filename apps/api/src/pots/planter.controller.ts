@@ -18,7 +18,7 @@ import { QueryPotsDto } from './dto/query-planters.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../auth/jwt.guard';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-// import { PlanterFamilyQuery } from './dto/planter-family-query.dto';
+import { PlanterFamilyQuery } from './dto/planter-family-query.dto';
 
 @UseGuards(JwtAuthGuard)
 @ApiTags('planters')
@@ -41,6 +41,15 @@ export class PlantersController {
   async findAll(@Query() query: QueryPotsDto) {
     return this.planterService.findAll(query);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('series')
+  @ApiOperation({
+    summary: 'Retrieves all planter series based on the provided query parameters',
+  })
+  async findAllPlanterFamily(@Query() query: PlanterFamilyQuery) {
+    return this.planterService.findAllPlanterFamily(query);
+  }
   
   @UseGuards(JwtAuthGuard)
   @Get(':id')
@@ -49,14 +58,6 @@ export class PlantersController {
     return this.planterService.findOne(id);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('series')
-  @ApiOperation({
-    summary: 'Retrieves all series based on the provided query parameters',
-  })
-  async findAllPlanterFamily() {
-    return this.planterService.findAllPlanterFamily();
-  }
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
@@ -88,7 +89,7 @@ export class PlantersController {
   @Post(':id/upload-image')
   @ApiOperation({ summary: 'Upload an image for a specific planter by its ID' })
   @UseInterceptors(FileInterceptor('file'))
-  async uploadPlantImage(
+  async uploadPlanterImage(
     @Param('id') planterId: string,
     @UploadedFile() file: Express.Multer.File,
   ) {

@@ -8,7 +8,7 @@ import { QueryPotsDto } from './dto/query-planters.dto';
 import { SkuService } from '../common/services/sku.service';
 import { productEnum } from '@leaffyearth/utils';
 import { AzureBlobService } from '../azure-blob/azure-blob.service';
-// import { PlanterFamilyQuery } from './dto/planter-family-query.dto';
+import { PlanterFamilyQuery } from './dto/planter-family-query.dto';
 
 @Injectable()
 export class PlanterService {
@@ -44,9 +44,30 @@ export class PlanterService {
       fields = query.fields.replace(/,/g, ' ');
     }
 
+    // Build filter
+    const filter: Record<string, any> = {};
+    
+    // Add search functionality - only by name
+    if (query.search) {
+      filter.name = { $regex: query.search, $options: 'i' };
+    }
+
+    // Add other filters if needed
+    if (query.planterCategory) {
+      filter.planterCategory = query.planterCategory;
+    }
+    
+    if (query.planterSeries) {
+      filter.planterSeries = query.planterSeries;
+    }
+    
+    if (query.size) {
+      filter.size = query.size;
+    }
+
     const [data, total] = await Promise.all([
-      this.potModel.find().select(fields).skip(skip).limit(limit).exec(),
-      this.potModel.countDocuments().exec(),
+      this.potModel.find(filter).select(fields).skip(skip).limit(limit).exec(),
+      this.potModel.countDocuments(filter).exec(),
     ]);
 
     return { data, page, limit, total };
@@ -58,158 +79,40 @@ export class PlanterService {
     return pot;
   }
 
-  // async findAllPlanterFamily(
-  //   query: PlanterFamilyQuery,
-  // ): Promise<Array<{ planterSeries: string; totalCount: number }>> {
-  // const pipeline: any[] = [];
+  async findAllPlanterFamily(
+    query: PlanterFamilyQuery,
+  ): Promise<Array<{ _id: string; totalCount: number }>> {
+    const pipeline: any[] = [];
 
-  // if (query.search) {
-  //   pipeline.push({
-  //     $match: {
-  //       planterSeries: { $regex: query.search, $options: 'i' },
-  //     },
-  //   });
-  // }
+    if (query.search) {
+      pipeline.push({
+        $match: {
+          planterSeries: {
+            $regex: query.search,
+            $options: 'i', // case-insensitive
+          },
+        },
+      });
+    }
 
-  // pipeline.push({
-  //   $match: { planterSeries: { $ne: null } },
-  // });
+    pipeline.push({
+      $match: {
+        planterSeries: { $ne: null },
+      },
+    });
 
-  // pipeline.push({
-  //   $group: {
-  //     _id: { $toString: '$planterSeries' }, // ✅ Fix: Convert _id to string
-  //     totalCount: { $sum: 1 },
-  //   },
-  // });
+    pipeline.push({
+      $group: {
+        _id: '$planterSeries', // distinct planterSeries
+        totalCount: { $sum: 1 }, // how many planters in that series
+      },
+    });
 
-  // pipeline.push({ $sort: { _id: 1 } });
+    pipeline.push({ $sort: { _id: 1 } });
 
-  // pipeline.push({
-  //   $project: {
-  //     planterSeries: '$_id',
-  //     totalCount: 1,
-  //     _id: 0,
-  //   },
-  // });
+    const data = await this.potModel.aggregate(pipeline).exec();
 
-  // const data = await this.potModel.aggregate(pipeline).exec();
-  // return data;
-
-  // }
-
-  // async findAllPlanterFamily(
-  //   query: PlanterFamilyQuery,
-  // ): Promise<Array<{ _id: string; totalCount: number }>> {
-  //   const pipeline: any[] = [];
-
-  //   if (query.search) {
-  //     pipeline.push({
-  //       $match: {
-  //         planterSeries: { $regex: query.search, $options: 'i' }, // case-insensitive search
-  //       },
-  //     });
-  //   }
-
-  //   pipeline.push({
-  //     $match: { planterSeries: { $ne: null } }, // Exclude null planterSeries
-  //   });
-
-  //   pipeline.push({
-  //     $addFields: {
-  //         plantSeriesString: { $toString: "$plantSeries" },  // Ensure it's a string
-  //     },
-  // });
-
-  //   pipeline.push({
-  //     $group: {
-  //       _id: "$plantSeriesString",  // Group by planterSeries
-  //       totalCount: { $sum: 1 }, // Count the number of items in each series
-  //     },
-  //   });
-
-  //   pipeline.push({ $sort: { _id: 1 } }); // Sort by planterSeries alphabetically
-
-  //   // pipeline.push({
-  //   //   $project: {
-  //   //     planterSeries: '$_id', // Rename _id to planterSeries
-  //   //     totalCount: 1,
-  //   //     _id: 0, // Exclude _id from the result
-  //   //   },
-  //   // });
-
-  //   const data = await this.potModel.aggregate(pipeline).exec();
-
-  //   return data.map((item) => ({
-  //     _id: String(item._id),  // Ensure `_id` is explicitly a string
-  //     totalCount: item.totalCount,
-  // }));
-  // }
-
-  //   async findAllPlanterFamily(
-  //     query: PlanterFamilyQuery
-  // ): Promise<Array<{ planterSeries: string; totalCount: number }>> {
-  //     const pipeline: any[] = [];
-
-  //     // Match search filter if provided
-  //     if (query.search) {
-  //         pipeline.push({
-  //             $match: {
-  //                 planterSeries: {
-  //                     $regex: query.search,
-  //                     $options: 'i', // case-insensitive
-  //                 },
-  //             },
-  //         });
-  //     }
-
-  //     // Exclude null values
-  //     pipeline.push({
-  //         $match: {
-  //             planterSeries: { $ne: null },
-  //         },
-  //     });
-
-  //     // Collect all unique plantSeries into an array
-  //     pipeline.push({
-  //         $group: {
-  //             _id: null,
-  //             uniquePlanterSeries: { $addToSet: "$planterSeries" },
-  //         },
-  //     });
-
-  //     // Unwind the array to get individual plantSeries
-  //     pipeline.push({
-  //         $unwind: "$uniquePlanterSeries",
-  //     });
-
-  //     // Count occurrences of each plantSeries
-  //     pipeline.push({
-  //         $group: {
-  //             _id: "$uniquePlanterSeries",
-  //             totalCount: { $sum: 1 },
-  //         },
-  //     });
-
-  //     // Sort alphabetically
-  //     pipeline.push({ $sort: { _id: 1 } });
-
-  //     // Rename `_id` to `plantSeries`
-  //     pipeline.push({
-  //         $project: {
-  //             planterSeries: "$_id",
-  //             totalCount: 1,
-  //             _id: 0,
-  //         },
-  //     });
-
-  //     // Execute aggregation pipeline
-  //     return await this.potModel.aggregate(pipeline).exec();
-  // }
-
-  async findAllPlanterFamily(): Promise<string[]> {
-    const allPlanters = await this.potModel.find().exec();
-    const seriesList = allPlanters.map((planter) => planter.planterSeries);
-    return Array.from(new Set(seriesList)); // Remove duplicates
+    return data;
   }
 
   async update(id: string, updateData: Partial<CreatePotDto>): Promise<Pot> {
