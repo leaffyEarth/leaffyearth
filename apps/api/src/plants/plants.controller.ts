@@ -19,13 +19,13 @@ import { UpdatePlantDto } from './dto/update-plant.dto';
 import { PlantFamilyQuery } from './dto/plant-family-query.dto';
 import { QuerySeriedDto } from './dto/query-seried.dto';
 import {
-  PartialUpdatePlanterVariantDto,
   UpdatePlanterVariantDto,
-} from './dto/update-planter-varients.dto';
-import { ApiOperation } from '@nestjs/swagger';
+  PartialUpdatePlanterVariantDto,
+} from './dto/update-planter-variant.dto';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt.guard';
-// import { JwtAuthGuard } from '../auth/jwt-bearer.guard';
 
+@ApiTags('plants')
 @Controller('plants')
 export class PlantsController {
   constructor(private readonly plantsService: PlantsService) {}
@@ -146,38 +146,40 @@ export class PlantsController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Delete(':id/planter-variants/:planterSku')
+  @Delete(':id/planter-variants/:planterId')
   @ApiOperation({
     summary: 'Deletes a specific planter variant by its ID',
   })
   async deletePlanterVariant(
     @Param('id') plantId: string,
-    @Param('planterSku') planterSku: string,
+    @Param('planterId') planterId: string,
   ) {
-    await this.plantsService.deletePlanterVariant(plantId, planterSku);
+    await this.plantsService.deletePlanterVariant(plantId, planterId);
+    return { message: 'Planter variant deleted successfully' };
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post(':id/planter-variants/:planterSku/upload-image')
+  @Post(':id/planter-variants/:planterId/upload-image')
   @ApiOperation({
     summary: 'Upload an image for a specific planter variant by its ID',
   })
   @UseInterceptors(FileInterceptor('file'))
   async uploadPlanterVariantImages(
     @Param('id') plantId: string,
-    @Param('planterSku') planterSku: string,
+    @Param('planterId') planterId: string,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    console.log('uploadPlanterVariantImages');
     await this.plantsService.uploadPlanterVariantImages(
       plantId,
-      planterSku,
+      planterId,
       file,
     );
+
+    return { message: 'Planter variant image uploaded successfully' };
   }
 
   @UseGuards(JwtAuthGuard)
-  @Patch(':id/planter-variants/:planterSku')
+  @Patch(':id/planter-variants/:planterId')
   @ApiOperation({
     summary:
       'Updates a specific planter variant by its ID using the provided update data.',
@@ -185,12 +187,12 @@ export class PlantsController {
   async updatePlanterVariant(
     @Body() updateDto: PartialUpdatePlanterVariantDto,
     @Param('id') plantId: string,
-    @Param('planterSku') planterSku: string,
+    @Param('planterId') planterId: string,
   ) {
     await this.plantsService.updatePlanterVariant(
       updateDto,
       plantId,
-      planterSku,
+      planterId,
     );
   }
 }

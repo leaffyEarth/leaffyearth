@@ -1,19 +1,18 @@
 // plants-planter-variants.schema.ts
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Schema as MongooseSchema, Types } from 'mongoose';
+import { Pot } from './pot.schema';
 
 export type PlantsPlanterVariantsDocument = PlantsPlanterVariants & Document;
 
 @Schema()
 export class PlantsPlanterVariants {
-
     @Prop({
-        type: String,
-        // required: true,
-        // unique: true,
-        sparse: true, // Allow multiple null values
+        type: MongooseSchema.Types.ObjectId,
+        ref: 'Pot',
+        required: true
     })
-    planterSku!: string;
+    planter!: Types.ObjectId;
 
     @Prop({
         type: [String],
@@ -25,8 +24,10 @@ export class PlantsPlanterVariants {
             message: 'Images must be an array of strings.'
         }
     })
-
     images!: string[];
 }
 
 export const PlantsPlanterVariantsSchema = SchemaFactory.createForClass(PlantsPlanterVariants);
+
+// Add index for better query performance
+PlantsPlanterVariantsSchema.index({ planter: 1 });

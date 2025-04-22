@@ -5,13 +5,22 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import { RequestWithCookies } from 'src/common/types.interface';
+import { UsersService } from '../users/user.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    private usersService: UsersService
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        (req: RequestWithCookies) => req?.cookies?.token || null,
+        (req: RequestWithCookies) => {
+          const token = (req?.headers as any)?.authorization?.startsWith('Bearer ') 
+            ? (req?.headers as any)?.authorization?.substring(7) 
+            : req?.cookies?.token || null;
+          return token;
+        },
         ExtractJwt.fromAuthHeaderAsBearerToken(), // Fallback to Authorization header
       ]),
       ignoreExpiration: false,
@@ -20,9 +29,19 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    // The object you return here is attached to req.user by passport
-    // and can be accessed in your route handlers
-    // e.g. req.user.email, req.user.role
-    return { email: payload.email, role: payload.role };
+    try {
+      // Fetch the user from the database using email
+      const user = await this.usersService.findOneByEmail(payload.email);      
+      // Return the user data with the role from the database
+      return { 
+        email: user.email, 
+        role: user.role,
+        id: (user as any).id // Use id property which is available on Mongoose documents
+      };
+    } catch (error) {
+      console.error('Error fetching user from database:', error);
+      // Fallback to payload data if database fetch fails
+      return { email: payload.email, role: payload.role };
+    }
   }
 }

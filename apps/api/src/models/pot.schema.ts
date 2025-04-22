@@ -1,8 +1,10 @@
 // src/models/pot.schema.ts
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Schema as MongooseSchema } from 'mongoose';
 import { planterCategoryEnum, sizeEnum } from '@leaffyearth/utils';
+import { PlantsPlanterVariants } from './plants-planter-variants.schema';
+import { Plant } from './plant.schema';
 
 export type PotDocument = Pot & Document;
 
@@ -63,3 +65,25 @@ export class Pot {
 }
 
 export const PotSchema = SchemaFactory.createForClass(Pot);
+
+// Add middleware to handle cascading deletes
+PotSchema.pre('deleteOne', { document: true, query: false }, async function(this: PotDocument, next: (err?: Error) => void) {
+    try {
+        // Get the models
+        const PlantsPlanterVariantsModel = this.model(PlantsPlanterVariants.name);
+        const PlantModel = this.model(Plant.name);
+        
+        // Delete all variants that reference this pot
+        await PlantsPlanterVariantsModel.deleteMany({ planter: this._id });
+        
+        // Update all plants that have this pot in their planterVariants array
+        await PlantModel.updateMany(
+            { 'planterVariants.planter': this._id },
+            { $pull: { planterVariants: { planter: this._id } } }
+        );
+        
+        next();
+    } catch (error) {
+        next(error as Error);
+    }
+});
