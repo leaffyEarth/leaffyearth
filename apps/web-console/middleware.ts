@@ -1,40 +1,43 @@
 import { NextRequest, NextResponse } from "next/server";
+import { jwtDecode } from "jwt-decode";
+import { decode } from "punycode";
+
+interface JwtPayload {
+  exp: number;
+  [key: string]: any;
+}
 
 export async function middleware(req: NextRequest) {
   const token = req.cookies.get("token")?.value;
   const { pathname } = req.nextUrl;
 
-  // ✅ Allow public access to the login page
   if (!token) {
-    if (pathname.startsWith('/auth/login')) {
-      return NextResponse.next(); // ✅ Allow users to access login page freely
+    if (pathname.startsWith("/auth/login")) {
+      return NextResponse.next();
     }
-    return NextResponse.redirect(new URL('/auth/login', req.url));
+    return NextResponse.redirect(new URL("/auth/login", req.url));
   }
 
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_SERVER_BASE_URL}/auth/me`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      },
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to authenticate");
+    console.log("i was called");
+    
+    const decoded: JwtPayload = jwtDecode(token);
+    const currentTime = Math.floor(Date.now() / 1000);
+    if (decoded.exp < currentTime) {
+      // Token expired
+      console.log("Token expired");
+      if (!pathname.startsWith("/auth/login")) {
+        return NextResponse.redirect(new URL("/auth/login", req.url));
+      }
+    } else {
+      // Already logged in — don't allow going to login page
+      if (pathname === "/auth/login" || pathname === "/") {
+        return NextResponse.redirect(new URL("/dashboard", req.url));
+      }
     }
-
-    // ✅ Prevent redirecting an already authenticated user back to login
-    if (pathname === '/auth/login') {
-      return NextResponse.redirect(new URL('/dashboard', req.url));
-    }
-  } catch (err) {
-    console.error("Authentication error:", err);
-
-    // ✅ Prevent redirect loop by only redirecting if not already on /auth/login
-    if (!pathname.startsWith('/auth/login')) {
-      return NextResponse.redirect(new URL('/auth/login', req.url));
-    }
+  } catch (error) {
+    console.error("Invalid token:", error);
+    return NextResponse.redirect(new URL("/auth/login", req.url));
   }
 
   return NextResponse.next();

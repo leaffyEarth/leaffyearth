@@ -7,15 +7,15 @@ export const api = axios.create({
   withCredentials: true,
 });
 
-api.interceptors.request.use(
-  (config: any) => {
-      const cookies = parseCookies();
-      const token = cookies.token;
+// api.interceptors.request.use(
+//   (config: any) => {
+//       const cookies = parseCookies();
+//       const token = cookies.token;
 
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-    return config;
-  },
-  (error: any) => Promise.reject(error),
-);
+//       if (token) {
+//         config.headers.Authorization = `Bearer ${token}`;
+//       }
+//     return config;
+//   },
+//   (error: any) => Promise.reject(error),
+// );

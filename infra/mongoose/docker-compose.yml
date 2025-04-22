@@ -4,7 +4,7 @@ services:
     image: mongo:latest
     container_name: leafy-mongodb
     ports:
-      - 27018:27017 # relace the 27017 in the front for changing the ports
+      - 27019:27017 # relace the 27017 in the front for changing the ports
     volumes:
       - ~/mongo-data:/data/db
  
