@@ -18,4 +18,4 @@ WORKDIR /app
 COPY --from=builder /app /app
 RUN npm install -g pnpm
 EXPOSE 3000
-CMD ["pnpm", "run", "dev-console"]
+CMD ["pnpm", "run", "prod-console"]

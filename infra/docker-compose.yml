@@ -3,11 +3,9 @@ version: '3.8'
 services:
   mongodb:
     image: mongo:latest
-    container_name: leafy-mongo
+    container_name: leaffy-mongo
     ports:
-      - "27018:27017"  # Expose MongoDB on port 27018 (local) -> 27017 (container)
-    volumes:
-      - ~/mongo-data:/data/db
+      - "27019:27017"  # Expose MongoDB on port 27018 (local) -> 27017 (container)
     networks:
       - app-network
     restart: unless-stopped 
@@ -32,7 +30,7 @@ services:
       context: ../../leaffyearth  # Root of the monorepo
       dockerfile: infra/frontend/Dockerfile
     ports:
-      - "5000:3000"  # Expose frontend on port 5000 (local) -> 3000 (container)
+      - "5000:5000"  # Expose frontend on port 5000 (local) -> 3000 (container)      
     container_name: my-frontend
     restart: unless-stopped
     depends_on:
@@ -41,7 +39,12 @@ services:
       - app-network
     environment:
       - NEXT_PUBLIC_API_SERVER_BASE_URL=http://localhost:3000  # Point Next.js frontend to backend inside Docker
-  
+      - GOOGLE_CLIENT_ID=1036536798555-70r67fripu8qi4p9g7utrv6nus6llne8.apps.googleusercontent.com
+      - GOOGLE_CLIENT_SECRET=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
+      - NEXTAUTH_URL=http://localhost:5000
+      - NEXTAUTH_SECRET=passleaffyearth # Generate with: openssl rand -base64 32 
+      - NEXT_PUBLIC_API_URL=http://backend:3000
+      - NEXT_PUBLIC_APP_URL=http://localhost:5000
 
 networks:
   app-network:

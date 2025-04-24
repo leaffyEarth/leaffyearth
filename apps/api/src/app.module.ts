@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/user.module';
 import { PaymentsModule } from './payment/payment.module';
 
+console.log("process.env.MONGODB_URI", process.env.MONGODB_URI);
 @Module({
   imports: [
     ConfigModule.forRoot({
