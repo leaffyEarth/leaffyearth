@@ -24,8 +24,7 @@ export interface IPlantFilters {
 }
 
 export interface IPlantsResponse {
-  data: any,
-  plants: any;
+  plants: IPlant[];
   total: number;
   page: number;
   totalPages: number;

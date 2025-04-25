@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useCallback } from 'react';
 import Image from 'next/image';
 import { usePlants, usePlantCategories } from '@/hooks/usePlants';
@@ -138,7 +140,7 @@ export default function PlantCatalog() {
                   )}
                 </div>
                 <div className="p-4">
-                  <h3 className="text-lg font-semibold mb-2 line-clamp-1 text-gray-900">{plant.plantSeries}</h3>
+                  <h3 className="text-lg font-semibold mb-2 line-clamp-1 text-gray-900">{plant.name}</h3>
                   <div className="flex items-baseline mb-4">
                     {plant.discountedPrice ? (
                       <>

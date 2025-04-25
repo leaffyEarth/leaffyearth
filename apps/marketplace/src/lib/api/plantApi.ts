@@ -4,16 +4,14 @@ class PlantApi {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = process.env.NEXT_API_URL || 'http://localhost:8000';
+    this.baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
   }
 
   private async handleRequest<T>(url: string, options?: RequestInit): Promise<T> {
     const response = await fetch(url, {
       ...options,
-      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
-        'Cookie': `token=${process.env.NEXT_PUBLIC_DEMO_TOKEN}`,
         ...options?.headers,
       },
     });

@@ -3,6 +3,7 @@ import { Inter as FontSans } from "next/font/google";
 import { Playfair_Display as FontHeading } from "next/font/google";
 import "@/styles/globals.css";
 import Header from "@/components/layout/Header";
+import TopBanner from "@/components/layout/TopBanner";
 import { Providers } from './providers';
 import { cn } from '@/lib/utils';
 import Footer from '@/components/layout/Footer';
@@ -73,6 +74,7 @@ export default function RootLayout({
         )}
       >
         <Providers>
+          <TopBanner />
           <Header />
           <main className="flex-grow">
             {children}

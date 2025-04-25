@@ -37,7 +37,7 @@ class ApiClient {
         // Add auth token if available
         const token = localStorage.getItem('auth_token');
         if (token) {
-          config.headers.Authorization = `Bearer ${process.env.NEXT_PUBLIC_DEMO_TOKEN}`;
+          config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
       },

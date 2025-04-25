@@ -11,12 +11,15 @@ const plantService = mockPlantService;
 export function usePlants(page: number = 1, limit: number = 12, filters?: IPlantFilters) {
   const { data, isLoading, error } = useQuery<IPlantsResponse, Error>({
     queryKey: ['plants', page, limit, filters],
-    queryFn: () => plantApi.getPlants(page, limit, filters),  
+    // queryFn: () => plantApi.getPlants(page, limit, filters),  
+
+    // TODO: Replace with real API service when backend is ready
+    queryFn: () => plantService.getPlants(page, limit, filters),
+
   });
-  console.log(data?.data);
 
   return {
-    plants: data?.data ?? [],
+    plants: data?.plants ?? [],
     total: data?.total ?? 0,
     totalPages: data?.totalPages ?? 0,
     page: data?.page ?? page,

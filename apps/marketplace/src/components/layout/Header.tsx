@@ -19,16 +19,17 @@ const Header = () => {
   useEffect(() => {
     const controlHeader = () => {
       const currentScrollY = window.scrollY;
+      const bannerHeight = 32; // Height of the top banner (py-2 = 8px top + 8px bottom + 16px content)
       
       // Show header in these cases:
       // 1. Scrolling up
       // 2. At the top of the page
       // 3. Scrolled less than header height (for smooth initial scroll)
       if (currentScrollY < lastScrollY || // Scrolling up
-          currentScrollY < 64 || // At top or near top (header height)
-          lastScrollY < 64) { // Initial scroll
+          currentScrollY < bannerHeight || // At top or near top (banner height)
+          lastScrollY < bannerHeight) { // Initial scroll
         setIsVisible(true);
-      } else if (currentScrollY > 64 && currentScrollY > lastScrollY) { // Scrolling down and past header
+      } else if (currentScrollY > bannerHeight && currentScrollY > lastScrollY) { // Scrolling down and past banner
         setIsVisible(false);
         // Close search when hiding header
         setIsSearchOpen(false);
@@ -50,7 +51,7 @@ const Header = () => {
   return (
     <>
       <header 
-        className={`fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-50 transition-transform duration-300 ${
+        className={`sticky top-0 bg-[#F4EDE1] z-50 transition-transform duration-300 ${
           isVisible ? 'translate-y-0' : '-translate-y-full'
         }`}
       >
@@ -150,9 +151,6 @@ const Header = () => {
         setIsOpen={setIsMobileMenuOpen}
         navigation={navigation}
       />
-
-      {/* Spacer to prevent content from going under fixed header */}
-      <div className="h-16" />
     </>
   );
 };
