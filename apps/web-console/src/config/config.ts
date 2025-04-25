@@ -1,0 +1,6 @@
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://backend:3000'
+export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '1036536798555-70r67fripu8qi4p9g7utrv6nus6llne8.apps.googleusercontent.com'
+export const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '=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'
+export const NEXTAUTH_URL = process.env.NEXTAUTH_URL || 'http://localhost:5000'
+export const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET || 'passleaffyearth'
+export const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:5000'
