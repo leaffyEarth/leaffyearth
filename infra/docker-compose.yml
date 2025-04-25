@@ -1,4 +1,4 @@
-version: '3.8'
+# version: '3.8'
 
 services:
   mongodb:
@@ -22,6 +22,8 @@ services:
       - mongodb  # Ensures MongoDB starts first
     environment:
       MONGODB_URI: mongodb://mongodb:27017/leaffyearth  # Use service name "mongodb", NOT localhost
+      GOOGLE_CALLBACK_URL: "http://localhost:3000/auth/google/callback"
+
     networks:
       - app-network
 

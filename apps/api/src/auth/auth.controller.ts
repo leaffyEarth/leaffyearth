@@ -27,7 +27,8 @@ export class AuthController {
     res.cookie('token', jwt, {
       httpOnly: true,
       secure: true,
-      sameSite: 'strict',
+      sameSite: 'none',
+      domain: '.leaffyearth.com',
     });
     return res.redirect(`${process.env.ADMIN_CONSOLE_URL}/auth-loading`);
   }
