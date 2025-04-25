@@ -17,5 +17,5 @@ WORKDIR /app
 # RUN npm install --only=production
 COPY --from=builder /app /app
 RUN npm install -g pnpm
-EXPOSE 5000
-CMD ["pnpm", "run", "dev-console"]
+EXPOSE 3000
+CMD ["pnpm", "run", "prod-console"]

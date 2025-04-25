@@ -12,7 +12,7 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
           queries: {
             // Global query configuration
             staleTime: 60 * 1000, // Consider data stale after 1 minute
-            cacheTime: 5 * 60 * 1000, // Cache data for 5 minutes
+            gcTime: 5 * 60 * 1000, // Cache data for 5 minutes (formerly cacheTime)
             refetchOnWindowFocus: true, // Refetch when window regains focus
             retry: 1, // Retry failed requests once
           },

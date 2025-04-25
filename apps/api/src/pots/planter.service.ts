@@ -49,7 +49,7 @@ export class PlanterService {
     
     // Add search functionality - only by name
     if (query.search) {
-      filter.name = { $regex: query.search, $options: 'i' };
+      filter.name = { $regex: new RegExp(query.search, 'i') };
     }
 
     // Add other filters if needed
