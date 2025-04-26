@@ -84,13 +84,26 @@ const Header = () => {
             {/* Logo */}
             <div className="flex-shrink-0">
               <Link href="/" className="flex items-center">
-                <Image
-                  src="/logo.svg"
-                  alt="Leaffy @ earth"
-                  width={120}
-                  height={40}
-                  className="h-8 w-auto"
-                />
+                {/* Mobile Logo */}
+                <div className="block md:hidden">
+                  <Image
+                    src="/small_logo.svg"
+                    alt="Leaffy @ earth"
+                    width={120}
+                    height={40}
+                    className="h-8 w-auto"
+                  />
+                </div>
+                {/* Desktop Logo */}
+                <div className="hidden md:block">
+                  <Image
+                    src="/large_logo.svg"
+                    alt="Leaffy @ earth"
+                    width={160}
+                    height={48}
+                    className="h-10 w-auto"
+                  />
+                </div>
               </Link>
             </div>
 

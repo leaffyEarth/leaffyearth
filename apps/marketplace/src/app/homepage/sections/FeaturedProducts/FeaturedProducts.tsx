@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import RoundedButton from '@/components/ui/RoundedButton';
 
 interface Product {
   id: string;
@@ -21,17 +22,18 @@ export default function FeaturedProducts({
   return (
     <section className="py-16">
       <div className="container-custom">
-        <div className="flex justify-between items-center mb-12">
+        {/* Header - Show button on side for md and up */}
+        <div className="hidden md:flex justify-between items-center mb-12">
           <h2 className="text-2xl md:text-3xl font-bold text-foreground">{title}</h2>
-          <Link 
-            href="/catalog"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
-          >
-            SHOP ALL
-          </Link>
+          <RoundedButton href="/catalog">Show More</RoundedButton>
+        </div>
+
+        {/* Header - Mobile version without button */}
+        <div className="md:hidden mb-8">
+          <h2 className="text-2xl font-bold text-foreground">{title}</h2>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {products.map((product) => (
             <Link 
               key={product.id}
@@ -53,6 +55,11 @@ export default function FeaturedProducts({
               </div>
             </Link>
           ))}
+        </div>
+
+        {/* Show More button - Mobile only, shown at bottom */}
+        <div className="mt-8 md:hidden flex justify-center">
+          <RoundedButton href="/catalog">Show More</RoundedButton>
         </div>
       </div>
     </section>

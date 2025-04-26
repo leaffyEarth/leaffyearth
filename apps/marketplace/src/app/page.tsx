@@ -14,22 +14,29 @@ const mockProducts = [
     id: '1',
     name: 'Bird\'s Nest Maranta',
     price: 29.99,
-    imageUrl: '/plants/maranta.jpg',
+    imageUrl: 'https://leaffystorage.blob.core.windows.net/leaffyearth/plants/680800144fd2b01ef62ea8bb/c8361417',
     slug: 'birds-nest-maranta'
   },
   {
     id: '2',
     name: 'Areca Palm',
     price: 39.99,
-    imageUrl: '/plants/areca-palm.jpg',
+    imageUrl: 'https://leaffystorage.blob.core.windows.net/leaffyearth/plants/680804df9843cab9c6df08bc/c90001f4',
     slug: 'areca-palm'
   },
   {
     id: '3',
-    name: 'Red Maranta',
+    name: 'Monstera Deliciosa',
     price: 34.99,
-    imageUrl: '/plants/red-maranta.jpg',
-    slug: 'red-maranta'
+    imageUrl: 'https://leaffystorage.blob.core.windows.net/leaffyearth/plants/680801af9843cab9c6df083a/a46de2f3',
+    slug: 'monstera'
+  },
+  {
+    id: '4',
+    name: 'Fiddle Leaf Fig',
+    price: 34.99,
+    imageUrl: 'https://leaffystorage.blob.core.windows.net/leaffyearth/plants/6808042e9843cab9c6df088c/52356964',
+    slug: 'fiddle-leaf'
   }
 ];
 
@@ -122,9 +129,9 @@ export default function Home() {
         products={mockProducts}
       />
       <PromoBanner
-        title="Free Designer Pot with every Plant"
-        description="Get handcrafted pots with your plant order. Limited time offer."
-        ctaText="SHOP NOW"
+        title="Design Your Perfect Plant-and-Pot Pairing."
+        description="See every plant in every designer pot and room style before you buy. Personalize the look, from tabletop succulents to statement fiddle-leaf figs."
+        ctaText="TRY IT NOW"
         ctaLink="/catalog"
       />
       <PlantersCollection
