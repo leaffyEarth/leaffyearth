@@ -14,7 +14,7 @@ console.log("process.env.MONGODB_URI", process.env.MONGODB_URI);
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ['.env.development', '.env.production'],
+      envFilePath: ['.env.local', '.env.development', '.env.production'],
     }),
     MongooseModule.forRoot(process.env.MONGODB_URI),
     PlantsModule,

@@ -26,6 +26,7 @@ async function bootstrap() {
         process.env.ADMIN_CONSOLE_URL,
         process.env.MARKETPLACE_URL,
         'http://localhost:3000',
+        'http://localhost:3001',
         'http://localhost:5000',
         'http://localhost:8000',
         'https://portal.leaffyearth.com',

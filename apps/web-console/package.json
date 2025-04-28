@@ -3,31 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-<<<<<<< HEAD
-    "dev": "next dev --port 5000 --hostname 0.0.0.0",
-    "build": "next build",
-    "start": "next start --port 5000 --hostname 0.0.0.0",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "@emotion/cache": "^11.14.0",
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.0",
-    "@leaffyearth/ui": "workspace:*",
-    "@leaffyearth/utils": "workspace:*",
-    "@mui/icons-material": "^6.2.1",
-    "@mui/material": "^6.2.1",
-    "@mui/x-data-grid": "^7.23.3",
-    "@reduxjs/toolkit": "^2.5.0",
-    "axios": "^1.7.9",
-    "js-cookie": "^3.0.5",
-    "jwt-decode": "^4.0.0",
-    "next": "15.1.2",
-    "nookies": "^2.5.2",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-redux": "^9.2.0"
-=======
     "dev": "next dev -p 5000",
     "build": "next build",
     "start": "next start -p 5000",
@@ -73,7 +48,6 @@
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.24.3",
     "zustand": "^4.5.0"
->>>>>>> origin/SandBox_nitin
   },
   "devDependencies": {
     "@types/node": "^20.11.16",

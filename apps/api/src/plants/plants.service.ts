@@ -142,8 +142,13 @@ export class PlantsService {
   }
 
   async findOne(id: string): Promise<Plant> {
+    if (!Types.ObjectId.isValid(id)) {
+      throw new BadRequestException('Invalid plant ID');
+    }
     const plant = await this.plantModel.findById(id).exec();
-    if (!plant) throw new NotFoundException('Plant not found');
+    if (!plant) {
+      throw new NotFoundException('Plant not found');
+    }
     return plant;
   }
 
