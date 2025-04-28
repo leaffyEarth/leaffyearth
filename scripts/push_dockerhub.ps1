@@ -12,11 +12,11 @@ $Pass | docker login --username $User --password-stdin
 foreach ($img in 'infra-frontend','infra-backend') {
   # debug
   $source = "${img}:latest"
-  $target = "${User}/${img}:latest"
+  $target = "${User}/leaffy-${img}:latest"
 
   Write-Output "Tagging $source → $target"
-  # docker tag $source $target
+  docker tag $source $target
 
   Write-Output "Pushing $target"
-  # docker push $target
+  docker push $target
 }
