@@ -64,27 +64,28 @@ export class PlantsService {
 
     const filter: Record<string, any> = {};
 
-    function setInFilter(fieldName: keyof QueryPlantsDto & string) {
-      const val = query[fieldName];
-      if (val) {
-        const array = val.split(',');
-        filter[fieldName] = { $in: array };
-      }
+    // Add series (plantSeries) filter
+    if (query.plantSeries) {
+      filter.plantSeries = query.plantSeries;
     }
 
-    setInFilter('size');
-    setInFilter('type');
-    setInFilter('lightExposure');
-    setInFilter('idealLocation');
-    setInFilter('maintenance');
-    setInFilter('watering');
-    setInFilter('tags');
+    // Add price range filter
+    if (query.minPrice || query.maxPrice) {
+      filter.price = {};
+      if (query.minPrice) {
+        filter.price.$gte = Number(query.minPrice);
+      }
+      if (query.maxPrice) {
+        filter.price.$lte = Number(query.maxPrice);
+      }
+    }
 
     try {
       const [data, total] = await Promise.all([
         this.plantModel
           .find(filter)
           .select(fields)
+          .sort(this.getSortOptions(query.sortBy))
           .skip(skip)
           .limit(limit)
           .exec(),
@@ -99,6 +100,22 @@ export class PlantsService {
     } catch (err) {
       console.error(`failed to fetch plant service ${err}`);
       throw new NotFoundException('exeption');
+    }
+  }
+
+  // Helper function to get sort options
+  private getSortOptions(sortBy?: string): Record<string, 1 | -1> {
+    switch (sortBy) {
+      case 'price_asc':
+        return { price: 1 };
+      case 'price_desc':
+        return { price: -1 };
+      case 'rating':
+        return { rating: -1 };
+      case 'newest':
+        return { createdAt: -1 };
+      default:
+        return { createdAt: -1 }; // Default sort by newest
     }
   }
 
@@ -181,19 +198,12 @@ export class PlantsService {
 
     function setInFilter(fieldName: keyof QueryPlantsDto & string) {
       const val = query[fieldName];
-      if (val) {
+      if (val && typeof val === 'string') {
         const array = val.split(',');
         filter[fieldName] = { $in: array };
       }
     }
 
-    setInFilter('size');
-    setInFilter('type');
-    setInFilter('lightExposure');
-    setInFilter('idealLocation');
-    setInFilter('maintenance');
-    setInFilter('watering');
-    setInFilter('tags');
 
     const pipeline: any[] = [];
 
@@ -456,5 +466,48 @@ export class PlantsService {
 
     variant.images.push(blobUrl);
     await plant.save();
+  }
+
+  async getAllPlantIds(): Promise<{ data: string[] }> {
+    try {
+      const plants = await this.plantModel.find().select('_id').lean().exec();
+      return {
+        data: plants.map(plant => plant._id.toString())
+      };
+    } catch (error) {
+      console.error('Failed to fetch plant IDs:', error);
+      throw new BadRequestException('Failed to fetch plant IDs');
+    }
+  }
+
+  async getAllSeries(): Promise<{ data: string[] }> {
+    try {
+      const series = await this.plantModel.distinct('plantSeries').exec();
+      return {
+        data: series
+      };
+    } catch (error) {
+      console.error('Failed to fetch series:', error);
+      throw new BadRequestException('Failed to fetch series');
+    }
+  }
+
+  async getPlantBySeries(series: string): Promise<{ data: Plant[] }> {
+    try {
+      const plants = await this.plantModel
+        .find({ plantSeries: series })
+        .populate({
+          path: 'planterVariants.planter',
+          model: 'Pot',
+          select: 'name planterCategory planterSeries dimensions color price images size sku description'
+        })
+        .exec();
+      return {
+        data: plants
+      };
+    } catch (error) {
+      console.error('Failed to fetch plants by series:', error);
+      throw new BadRequestException('Failed to fetch plants by series');
+    }
   }
 }

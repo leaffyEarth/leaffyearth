@@ -12,7 +12,7 @@ interface IUsePlantsOptions {
 
 export function usePlants({ 
   page = 1, 
-  limit = 10,
+  limit = 15,
   enabled = true 
 }: IUsePlantsOptions = {}) {
   const query = useQuery<IPlantsResponse, Error>({

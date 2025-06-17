@@ -135,7 +135,7 @@ export function CreatePlantForm() {
               <FormItem>
                 <FormLabel>Plant Series</FormLabel>
                 <Select
-                  onValueChange={(value) => {
+                  onValueChange={(value: string) => {
                     if (value === "new") {
                       setShowNewSeriesInput(true)
                       field.onChange("")
@@ -307,7 +307,6 @@ export function CreatePlantForm() {
                     selected={field.value || []}
                     onChange={(values) => {
                       field.onChange(values)
-                      console.log('Selected types:', values)
                     }}
                     placeholder="Select types"
                   />
@@ -356,7 +355,6 @@ export function CreatePlantForm() {
                     selected={field.value || []}
                     onChange={(values) => {
                       field.onChange(values)
-                      console.log('Selected locations:', values)
                     }}
                     placeholder="Select locations"
                   />

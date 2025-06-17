@@ -14,7 +14,8 @@ import {
   Leaf,
   Flower2,
   LogOut,
-  User
+  User,
+  MapPin
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -44,6 +45,16 @@ const sidebarItems = [
         icon: Flower2,
       },
     ],
+  },
+  {
+    title: "Partners",
+    href: "/partners",
+    icon: Users,
+  },
+  {
+    title: "Locations",
+    href: "/locations",
+    icon: MapPin,
   },
   {
     title: "Orders",

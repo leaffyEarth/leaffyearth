@@ -3,7 +3,7 @@ import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/commo
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from '../models/user.schema';
-import { QueryUsersDto } from './dto/quary-users.dto';
+import { QueryUsersDto } from './dto/query-users.dto';
 import { handleMongooseError } from '../common/services/databaseError.service';
 import { UserPayload } from '../common/types.interface';
 
@@ -15,10 +15,7 @@ export class UsersService {
   ) { }
 
   async createUser(userData: Partial<User>, currentUserRole: string): Promise<User> {
-    const { email, role, displayName } = userData;
-
-    console.log("role of the user", role)
-    console.log("currentUserRole of the user", currentUserRole)
+    const { email, role, name, uid, dob, gender } = userData;
 
     if ((role === 'admin' || role === 'owner') && currentUserRole !== 'owner') {
       throw new ForbiddenException('Only an owner can create admin/owner');
@@ -29,7 +26,10 @@ export class UsersService {
     try {
       const newUser = new this.userModel({
         email,
-        displayName,
+        name,
+        uid,
+        dob,
+        gender,
         role: finalRole,
       });
       await newUser.save();

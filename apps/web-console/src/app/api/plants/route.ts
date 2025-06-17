@@ -2,8 +2,8 @@ import { getServerSession } from "next-auth"
 import { NextResponse } from "next/server"
 import { authOptions } from "@/lib/auth"
 import { createJwtToken } from "@/lib/jwt"
-import { API_URL } from "@/lib/config"
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 export async function GET(request: Request) {
   try {
@@ -14,7 +14,7 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url)
     const page = searchParams.get("page") ?? "1"
-    const limit = searchParams.get("limit") ?? "10"
+    const limit = searchParams.get("limit") ?? "15"
 
     const token = createJwtToken(session)
     

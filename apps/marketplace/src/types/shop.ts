@@ -4,7 +4,8 @@ export interface IPlant extends IBaseEntity {
   name: string;
   description: string;
   price: number;
-  category: string;
+  series: string;
+  size: string;
   imageUrl: string;
   stock: number;
   rating: number;

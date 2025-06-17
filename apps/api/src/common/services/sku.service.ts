@@ -11,7 +11,6 @@ export class SkuService {
     size: string,
   ): string {
     const typePrefix = (productType || '').slice(0, 2).toUpperCase() || 'PL';
-    console.log(size);
     const plantSeriesCode = (plantSeries || '')
       .toUpperCase()
       .split(/\s+/)

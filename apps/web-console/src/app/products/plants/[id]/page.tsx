@@ -67,7 +67,6 @@ export default function PlantPage() {
           limit: 25,
           fields: "name"
         })
-        console.log("data planters", data)
         setPlanters(data.data.map((planter: any) => ({
           id: planter._id || planter.id,
           name: planter.name
@@ -235,7 +234,7 @@ export default function PlantPage() {
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </AlertDialogTrigger>
-                    <AlertDialogContent>
+                    {/* <AlertDialogContent>
                       <AlertDialogHeader>
                         <AlertDialogTitle>Delete Image</AlertDialogTitle>
                         <AlertDialogDescription>
@@ -248,9 +247,9 @@ export default function PlantPage() {
                         </AlertDialogCancel>
                         <AlertDialogAction onClick={handleDeleteImage}>
                           Delete
-                        </AlertDialogAction>
+                        </AlertDialogAction> 
                       </AlertDialogFooter>
-                    </AlertDialogContent>
+                    </AlertDialogContent>*/}
                   </AlertDialog>
                 </div>
               </div>
@@ -302,7 +301,7 @@ export default function PlantPage() {
                     )}
                   </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent>
+                {/* <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>Add Planter Variant</AlertDialogTitle>
                     <AlertDialogDescription>
@@ -317,7 +316,7 @@ export default function PlantPage() {
                       Add Variant
                     </AlertDialogAction>
                   </AlertDialogFooter>
-                </AlertDialogContent>
+                </AlertDialogContent> */}
               </AlertDialog>
             </div>
           </div>
@@ -343,7 +342,7 @@ export default function PlantPage() {
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </AlertDialogTrigger>
-                        <AlertDialogContent>
+                        {/* <AlertDialogContent>
                           <AlertDialogHeader>
                             <AlertDialogTitle>Delete Planter Variant</AlertDialogTitle>
                             <AlertDialogDescription>
@@ -358,7 +357,7 @@ export default function PlantPage() {
                               Delete
                             </AlertDialogAction>
                           </AlertDialogFooter>
-                        </AlertDialogContent>
+                        </AlertDialogContent> */}
                       </AlertDialog>
                     </div>
 
@@ -417,7 +416,7 @@ export default function PlantPage() {
                   )}
                 </Button>
               </AlertDialogTrigger>
-              <AlertDialogContent>
+              {/* <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                   <AlertDialogDescription>
@@ -434,7 +433,7 @@ export default function PlantPage() {
                     Delete Plant
                   </AlertDialogAction>
                 </AlertDialogFooter>
-              </AlertDialogContent>
+              </AlertDialogContent> */}
             </AlertDialog>
           </div>
         </div>

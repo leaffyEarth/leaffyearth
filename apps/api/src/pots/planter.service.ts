@@ -79,6 +79,14 @@ export class PlanterService {
     return pot;
   }
 
+  async getPlantersBySeries(series: string): Promise<Pot[]> {
+    const planters = await this.potModel
+      .find({ planterSeries: series })
+      .exec();
+    if (!planters || planters.length === 0) throw new NotFoundException('No planters found for this series');
+    return planters;
+  }
+
   async findAllPlanterFamily(
     query: PlanterFamilyQuery,
   ): Promise<Array<{ _id: string; totalCount: number }>> {

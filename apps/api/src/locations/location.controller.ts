@@ -4,13 +4,15 @@ import {
   Get,
   Post,
   Body,
-  Param,
   Patch,
+  Param,
   Delete,
+  Query,
 } from '@nestjs/common';
+import { LocationsService } from './location.service';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
-import { LocationsService } from './location.service';
+import { QueryLocationsDto } from './dto/query-locations.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('locations')
@@ -28,8 +30,8 @@ export class LocationsController {
   @ApiOperation({
     summary: 'Retrieves all locations based on the provided query parameters',
   })
-  findAll() {
-    return this.locationsService.findAll();
+  findAll(@Query() query: QueryLocationsDto) {
+    return this.locationsService.findAll(query);
   }
 
   @Get(':id')
@@ -43,10 +45,7 @@ export class LocationsController {
     summary:
       'Updates a specific location by its ID using the provided update data.',
   })
-  update(
-    @Param('id') id: string,
-    @Body() updateLocationDto: UpdateLocationDto,
-  ) {
+  update(@Param('id') id: string, @Body() updateLocationDto: UpdateLocationDto) {
     return this.locationsService.update(id, updateLocationDto);
   }
 

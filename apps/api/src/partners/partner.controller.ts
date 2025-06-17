@@ -7,11 +7,13 @@ import {
     Patch,
     Param,
     Delete,
+    Query,
 } from '@nestjs/common';
 import { UpdatePartnerDto } from './dto/update-partner.dto';
 import { PartnersService } from './partner.service';
 import { CreatePartnerDto } from './dto/create.partner.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { QueryPartnersDto } from './dto/query-partners.dto';
 
 @ApiTags('partners')
 @Controller('partners')
@@ -28,8 +30,8 @@ export class PartnersController {
     @ApiOperation({
         summary: 'Retrieves all partners based on the provided query parameters',
     })
-    findAll() {
-        return this.partnersService.findAll();
+    findAll(@Query() query: QueryPartnersDto) {
+        return this.partnersService.findAll(query);
     }
 
     @Get(':id')

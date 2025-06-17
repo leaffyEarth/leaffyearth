@@ -8,13 +8,30 @@ export type PartnerDocument = Partner & Document;
 
 @Schema({ timestamps: true })
 export class Partner {
-    
+
+  @Prop({ required: true })
+  partnerId!: string;
+
   @Prop({ required: true })
   name!: string;
 
+  @Prop({ required: true })
+  ownerName!: string;
+
+  @Prop({ required: true })
+  primaryPhoneNumber!: string;
+
+  @Prop()
+  secondaryPhoneNumber?: string;
+
+  @Prop()
+  email?: string;
+
+  @Prop()
+  region?: string;
+
   @Prop()
   address!: string; 
-  // e.g. "123 MG Road, near XYZ landmark"
 
   @Prop({
     type: Types.ObjectId,
@@ -22,16 +39,12 @@ export class Partner {
     required: true,
   })
   location!: Types.ObjectId;
-  // Points to the minimal location record
 
-  @Prop()
-  contactPerson?: string;
+  @Prop({ required: true })
+  latitude!: number;
 
-  @Prop()
-  contactPhone?: string;
-
-  @Prop()
-  email?: string;
+  @Prop({ required: true })
+  longitude!: number;
 
   @Prop({ default: true })
   isActive!: boolean;

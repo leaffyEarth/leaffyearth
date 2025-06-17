@@ -24,11 +24,30 @@ import {
 } from './dto/update-planter-variant.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt.guard';
+import { getActiveResourcesInfo } from 'process';
 
 @ApiTags('plants')
 @Controller('plants')
 export class PlantsController {
   constructor(private readonly plantsService: PlantsService) {}
+
+  @Get('ids')
+  @ApiOperation({ summary: 'Get all plant IDs' })
+  async getAllPlantIds() {
+    return  await this.plantsService.getAllPlantIds();
+  }
+
+  @Get('getAllSeries')
+  @ApiOperation({ summary: 'Get all series' })
+  async getAllSeries() {
+    return await this.plantsService.getAllSeries();
+  }
+ 
+  @Get('getPlantBySeries')
+  @ApiOperation({ summary: 'Get all plants by series' })
+  async getPlantBySeries(@Query('series') series: string) {
+    return await this.plantsService.getPlantBySeries(series);
+  }
 
   @Post()
   @ApiOperation({ summary: 'Creates a new plant' })
@@ -41,7 +60,7 @@ export class PlantsController {
   @ApiOperation({
     summary: 'Retrieves all plants based on the provided query parameters',
   })
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   async findAll(@Query() query: QueryPlantsDto) {
     return this.plantsService.findAll(query);
   }
@@ -84,7 +103,7 @@ export class PlantsController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Retrieves a specific plant by its ID.' })
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   async findOne(@Param('id') id: string) {
     return this.plantsService.findOne(id);
   }

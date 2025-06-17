@@ -1,7 +1,7 @@
 import { IPlant, IPlantsResponse } from "@/types/plants"
 import { CreatePlantInput } from "@/lib/validations/plant"
 
-export async function getPlants(page = 1, limit = 10): Promise<IPlantsResponse> {
+export async function getPlants(page = 1, limit = 15): Promise<IPlantsResponse> {
   try {
     const response = await fetch(`/api/plants?page=${page}&limit=${limit}`)
 

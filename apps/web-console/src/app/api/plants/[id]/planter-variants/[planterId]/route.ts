@@ -8,7 +8,6 @@ export async function DELETE(
   { params }: { params: { id: string; planterId: string } }
 ) {
   try {
-    console.log("DELETE request received for planter variant", params.planterId)
     const session = await getServerSession(authOptions)
     if (!session) {
       return new Response(JSON.stringify({ message: "Unauthorized" }), {
@@ -27,8 +26,6 @@ export async function DELETE(
         },
       }
     )
-
-    console.log("DELETE response", response)
 
     const data = await response.json()
 

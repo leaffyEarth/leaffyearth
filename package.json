@@ -19,7 +19,7 @@
     "prod-console": "pnpm --filter console run start",
     "prod-marketplace": "pnpm --filter marketplace run start",
     "doc-all": "docker compose -f ./infra/docker-compose.yml up --build"
-  },
+  }, 
   "keywords": [],
   "author": "",
   "license": "ISC",

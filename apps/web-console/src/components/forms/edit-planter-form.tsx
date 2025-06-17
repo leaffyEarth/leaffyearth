@@ -46,7 +46,6 @@ export function EditPlanterForm({ planter }: EditPlanterFormProps) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [pendingData, setPendingData] = useState<CreatePlanterInput | null>(null)
-  console.log("planter", planter)
   const defaultValues: CreatePlanterInput = {
     name: planter.name,
     planterCategory: planter.planterCategory,
@@ -304,7 +303,7 @@ export function EditPlanterForm({ planter }: EditPlanterFormProps) {
           />
         </div>
 
-        <AlertDialog open={!!pendingData} onOpenChange={(open) => !open && setPendingData(null)}>
+        {/* <AlertDialog open={!!pendingData} onOpenChange={(open) => !open && setPendingData(null)}>
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>Update Planter</AlertDialogTitle>
@@ -319,7 +318,7 @@ export function EditPlanterForm({ planter }: EditPlanterFormProps) {
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
-        </AlertDialog>
+        </AlertDialog> */}
 
         <Button type="submit" disabled={isLoading}>
           {isLoading ? "Updating..." : "Update Planter"}

@@ -4,15 +4,16 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useCart } from '@/hooks/useCart';
-import { Search, ShoppingBag, User, ChevronDown, Menu } from 'lucide-react';
+import { Search, User, ChevronDown, Menu, ShoppingCart } from 'lucide-react';
 import MobileMenu from './MobileMenu';
+import { CartSidebar } from "@/components/layout/CartSidebar";
 
 const Header = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
-  const { items } = useCart();
+  const { items, openSidebar } = useCart();
   
   const cartItemsCount = items.length;
 
@@ -44,7 +45,7 @@ const Header = () => {
 
   const navigation = [
     { name: 'PLANTS', href: '/plants' },
-    { name: 'POTS', href: '/pots' },
+    { name: 'PLANTERS', href: '/planters' },
     { name: 'LOOKBOOK', href: '/lookbook' },
   ];
 
@@ -129,14 +130,17 @@ const Header = () => {
               </Link>
 
               {/* Cart */}
-              <Link href="/cart" className="text-gray-700 hover:text-green-600 relative">
-                <ShoppingBag className="h-5 w-5" />
+              <button onClick={openSidebar} className="ml-4 flex items-center relative">
+                <ShoppingCart className="w-6 h-6" />
                 {cartItemsCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-green-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  <span
+                    className="absolute top-0 right-0 bg-green-600 text-white rounded-full px-1.5 text-xs flex items-center justify-center"
+                    style={{ transform: 'translate(35%,-35%)', zIndex: 10 }}
+                  >
                     {cartItemsCount}
                   </span>
                 )}
-              </Link>
+              </button>
             </div>
           </div>
         </div>
@@ -164,6 +168,8 @@ const Header = () => {
         setIsOpen={setIsMobileMenuOpen}
         navigation={navigation}
       />
+
+      <CartSidebar />
     </>
   );
 };

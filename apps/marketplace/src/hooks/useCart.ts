@@ -1,21 +1,30 @@
 'use client';
 
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import type { ICart, ICartItem, IPlant } from '@/types/shop';
+import { create, StateCreator } from 'zustand';
+import { persist, PersistOptions } from 'zustand/middleware';
+import type { ICart, IPlant } from '@/types/shop';
 
 interface ICartStore extends ICart {
   addItem: (plant: IPlant, quantity?: number) => void;
   removeItem: (plantId: string) => void;
   updateQuantity: (plantId: string, quantity: number) => void;
   clearCart: () => void;
+  isSidebarOpen: boolean;
+  openSidebar: () => void;
+  closeSidebar: () => void;
 }
 
+// This is the correct type when using the `persist` middleware
+// type CartStoreCreator = StateCreator<ICartStore, [], PersistOptions<ICartStore>>;
+
 export const useCart = create<ICartStore>()(
-  persist(
+  persist<ICartStore, [], any>(
     (set, get) => ({
       items: [],
       total: 0,
+      isSidebarOpen: false,
+      openSidebar: () => set({ isSidebarOpen: true }),
+      closeSidebar: () => set({ isSidebarOpen: false }),
       addItem: (plant: IPlant, quantity = 1) => {
         const items = get().items;
         const existingItem = items.find((item) => item.id === plant.id);
@@ -33,28 +42,29 @@ export const useCart = create<ICartStore>()(
             items: [...items, { id: plant.id, plant, quantity }],
           });
         }
-        // Recalculate total
         set((state) => ({
           total: state.items.reduce((sum, item) => sum + item.plant.price * item.quantity, 0)
         }));
       },
       removeItem: (plantId: string) => {
-        set((state) => ({
-          items: state.items.filter((item) => item.id !== plantId),
-          total: state.items
-            .filter((item) => item.id !== plantId)
-            .reduce((sum, item) => sum + item.plant.price * item.quantity, 0)
-        }));
+        set((state) => {
+          const filteredItems = state.items.filter((item) => item.id !== plantId);
+          return {
+            items: filteredItems,
+            total: filteredItems.reduce((sum, item) => sum + item.plant.price * item.quantity, 0)
+          };
+        });
       },
       updateQuantity: (plantId: string, quantity: number) => {
-        set((state) => ({
-          items: state.items.map((item) =>
+        set((state) => {
+          const updatedItems = state.items.map((item) =>
             item.id === plantId ? { ...item, quantity } : item
-          ),
-          total: state.items
-            .map((item) => item.id === plantId ? { ...item, quantity } : item)
-            .reduce((sum, item) => sum + item.plant.price * item.quantity, 0)
-        }));
+          );
+          return {
+            items: updatedItems,
+            total: updatedItems.reduce((sum, item) => sum + item.plant.price * item.quantity, 0)
+          };
+        });
       },
       clearCart: () => set({ items: [], total: 0 }),
     }),
@@ -62,4 +72,4 @@ export const useCart = create<ICartStore>()(
       name: 'cart-storage',
     }
   )
-); 
+);

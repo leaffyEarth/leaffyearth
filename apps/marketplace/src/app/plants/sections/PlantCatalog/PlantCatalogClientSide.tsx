@@ -1,17 +1,40 @@
-'use client';
+"use client"
 
 import { useState, useCallback } from 'react';
 import Image from 'next/image';
-import { usePlants, usePlantCategories } from '@/hooks/usePlants';
-import type { IPlantFilters } from '@/types/plant';
+import { usePlants} from '@/hooks/usePlants';
+import type { IPlantFilters, IPlant } from '@/types/plant';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ErrorMessage } from '@/components/ui/ErrorMessage';
+import { useAuth } from '@/hooks/useAuth';
 
-export default function PlantCatalog() {
+// interface PlantCatalogClientProps {
+//   initialPlants: {
+//     data: any[];
+//     total: number;
+//     // totalPages: number;
+//   };
+//   initialSeries: { data: any };
+// }
+
+export default function PlantCatalogClientSide({ 
+  initialPlants,
+  initialSeries 
+}: any) {
   const [page, setPage] = useState(1);
   const [filters, setFilters] = useState<IPlantFilters>({});
-  const { plants, total, totalPages, isLoading, error } = usePlants(page, 12, filters);
-  const { data: categories, isLoading: categoriesLoading } = usePlantCategories();
+  const { idToken } = useAuth();
+  const { 
+    plants, 
+    total, 
+    totalPages, 
+    page: pageNumber,
+    isLoading, 
+    error 
+  } = usePlants(page, 12, filters, {
+    initialData: initialPlants,
+    enabled: page !== 1 || Object.keys(filters).length > 0 // Only fetch if page changes or filters applied
+  }, idToken || undefined);
 
   const handleFilterChange = useCallback((key: keyof IPlantFilters, value: string | number | null) => {
     setFilters(prev => {
@@ -23,19 +46,19 @@ export default function PlantCatalog() {
   const handlePriceRangeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     switch (value) {
-      case 'under-25':
-        handleFilterChange('maxPrice', 25);
+      case 'under-500':
+        handleFilterChange('maxPrice', 500);
         break;
-      case '25-50':
-        handleFilterChange('minPrice', 25);
-        handleFilterChange('maxPrice', 50);
+      case '500-1000':
+        handleFilterChange('minPrice', 500);
+        handleFilterChange('maxPrice', 1000);
         break;
-      case '50-100':
-        handleFilterChange('minPrice', 50);
-        handleFilterChange('maxPrice', 100);
+      case '1000-2000':
+        handleFilterChange('minPrice', 1000);
+        handleFilterChange('maxPrice', 2000);
         break;
-      case 'over-100':
-        handleFilterChange('minPrice', 100);
+      case 'over-2000':
+        handleFilterChange('minPrice', 2000);
         handleFilterChange('maxPrice', null);
         break;
       default:
@@ -53,20 +76,19 @@ export default function PlantCatalog() {
       <section className="max-w-8xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         {/* Filters */}
         <div className="mb-8 py-6">
-          {/* <h2 className="text-lg font-semibold mb-4">Filter Plants</h2> */}
+          <h2 className="text-lg font-semibold mb-4">Filter Plants</h2>
           <div className="flex flex-wrap gap-4">
             <div className="flex flex-col gap-1">
-              <label htmlFor="category" className="text-sm text-gray-600">Category</label>
+              <label htmlFor="series" className="text-sm text-gray-600">Series</label>
               <select
-                id="category"
+                id="series"
                 className="px-4 py-2 border rounded-lg min-w-[200px]"
-                onChange={(e) => handleFilterChange('category', e.target.value || null)}
-                disabled={categoriesLoading}
+                onChange={(e) => handleFilterChange('plantSeries', e.target.value || null)}
               >
                 <option value="">All Categories</option>
-                {categories?.map((category) => (
-                  <option key={category} value={category}>
-                    {category}
+                {initialSeries?.data?.map((series: string) => (
+                  <option key={series} value={series}>
+                    {series}
                   </option>
                 ))}
               </select>
@@ -80,10 +102,10 @@ export default function PlantCatalog() {
                 onChange={handlePriceRangeChange}
               >
                 <option value="">Any Price</option>
-                <option value="under-25">Under ₹2,000</option>
-                <option value="25-50">₹2,000 to ₹4,000</option>
-                <option value="50-100">₹4,000 to ₹8,000</option>
-                <option value="over-100">Over ₹8,000</option>
+                <option value="under-500">Under ₹500</option>
+                <option value="500-1000">₹500 to ₹1,000</option>
+                <option value="1000-2000">₹1,000 to ₹2,000</option>
+                <option value="over-2000">Over ₹2,000</option>
               </select>
             </div>
 
@@ -120,32 +142,32 @@ export default function PlantCatalog() {
           <LoadingSpinner />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
-            {plants.map((plant) => (
+            {plants.map((plant: IPlant) => (
               <div 
-                key={plant.id} 
+                key={plant._id} 
                 className="rounded-lg overflow-hidden"
               >
                 <div className="relative h-64">
                   <Image
-                    src={plant.imageUrl}
+                    src={plant.images[0]}
                     alt={plant.name}
                     fill
                     className="object-cover"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   />
-                  {plant.offer && (
+                  {/* {plant.offer && (
                     <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-full text-sm font-medium">
                       {plant.offer.label}
                     </div>
-                  )}
+                  )} */}
                 </div>
                 <div className="p-4">
-                  <h3 className="text-lg font-semibold mb-2 line-clamp-1 text-gray-900">{plant.name}</h3>
+                  <h3 className="text-lg font-semibold mb-2 line-clamp-1 text-gray-900">{plant.plantSeries}</h3>
                   <div className="flex items-baseline mb-4">
-                    {plant.discountedPrice ? (
+                    {plant.price ? (
                       <>
                         <span className="text-xl font-bold text-green-600">
-                          ₹{plant.discountedPrice.toLocaleString('en-IN')}
+                          ₹{plant.price.toLocaleString('en-IN')}
                         </span>
                         <span className="ml-2 text-xs text-gray-500 line-through">
                           ₹{plant.price.toLocaleString('en-IN')}
@@ -159,7 +181,7 @@ export default function PlantCatalog() {
                   </div>
                   <button 
                     className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2 px-4 rounded-md transition-colors"
-                    onClick={() => window.location.href = `/plants/${plant.id}`}
+                    onClick={() => window.location.href = `/plants/${plant.plantSeries}`}
                   >
                     View Product
                   </button>

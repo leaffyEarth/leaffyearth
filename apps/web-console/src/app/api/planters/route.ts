@@ -16,7 +16,6 @@ export async function GET(request: NextRequest) {
 
     // Get query parameters
     const { searchParams } = new URL(request.url)
-    console.log("searchParams", searchParams)
     const page = searchParams.get("page") || "1"
     const limit = searchParams.get("limit") || "10"
     const fields = searchParams.get("fields")
@@ -35,7 +34,6 @@ export async function GET(request: NextRequest) {
     if (planterSeries) queryParams.append("planterSeries", planterSeries)
     if (size) queryParams.append("size", size)
 
-    console.log("queryParams", queryParams.toString())
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/planters?${queryParams.toString()}`,
       {

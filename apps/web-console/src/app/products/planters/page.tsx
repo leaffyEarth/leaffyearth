@@ -13,7 +13,7 @@ export default function PlantersPage() {
     planters,
     isLoading,
     error,
-    page,
+    page, 
     setPage,
     totalPages,
   } = usePlanters()

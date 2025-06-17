@@ -11,6 +11,13 @@ export class User {
         type: String,
         required: true,
         unique: true,
+    })
+    uid!: string;
+
+    @Prop({
+        type: String,
+        required: true,
+        unique: true,
         validate: {
             validator: (value: string) => {
                 return /^\S+@\S+\.\S+$/.test(value);
@@ -20,8 +27,11 @@ export class User {
     })
     email!: string;
 
-    @Prop()
-    displayName?: string;
+    @Prop({
+        type: String,
+        required: true,
+    })
+    name!: string;
 
     @Prop({
         type: String,
@@ -30,6 +40,18 @@ export class User {
     })
     role!: roleEnum;
 
+    @Prop({
+        type: Date,
+        required: true,
+    })
+    dob!: Date;
+
+    @Prop({
+        type: String,
+        enum: ['male', 'female', 'other'],
+        required: true,
+    })
+    gender!: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

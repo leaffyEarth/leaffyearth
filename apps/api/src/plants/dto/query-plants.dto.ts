@@ -1,5 +1,6 @@
 // plants/dto/query-plants.dto.ts
-import { IsOptional, IsNumberString, IsString } from 'class-validator';
+import { IsOptional, IsNumberString, IsString, IsNumber, Min, IsEnum } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class QueryPlantsDto {
   @IsOptional()
@@ -14,32 +15,23 @@ export class QueryPlantsDto {
   @IsString()
   fields?: string;
 
-  // Add filter fields (all optional, all strings)
   @IsOptional()
   @IsString()
-  size?: string;
+  plantSeries?: string;
 
   @IsOptional()
-  @IsString()
-  type?: string;
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @Min(0)
+  minPrice?: number;
 
   @IsOptional()
-  @IsString()
-  lightExposure?: string;
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @Min(0)
+  maxPrice?: number;
 
   @IsOptional()
-  @IsString()
-  idealLocation?: string;
-
-  @IsOptional()
-  @IsString()
-  maintenance?: string;
-
-  @IsOptional()
-  @IsString()
-  watering?: string;
-
-  @IsOptional()
-  @IsString()
-  tags?: string;
+  @IsEnum(['price_asc', 'price_desc', 'rating', 'newest'])
+  sortBy?: 'price_asc' | 'price_desc' | 'rating' | 'newest';
 }

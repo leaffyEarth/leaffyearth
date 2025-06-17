@@ -9,7 +9,6 @@ export async function getAuthToken() {
     }
 
     const token = createJwtToken(session)
-    console.log("Generated JWT token:", token)
     return token
   } catch (error) {
     console.error("Error getting auth token:", error)

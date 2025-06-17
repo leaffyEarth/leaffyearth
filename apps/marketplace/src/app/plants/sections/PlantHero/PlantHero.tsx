@@ -1,8 +1,11 @@
+'use client';
+
+import { motion } from 'framer-motion';
 import Image from 'next/image';
 
 export default function PlantHero() {
   return (
-    <section className="relative w-full h-[50vh] min-h-[400px]">
+    <section className="relative h-[60vh] min-h-[500px] w-full overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0">
         <Image
@@ -17,16 +20,18 @@ export default function PlantHero() {
       </div>
 
       {/* Content */}
-      <div className="relative h-full max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col justify-center h-full max-w-2xl">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
-            Discover Our Premium Plants
-          </h1>
-          <p className="text-lg md:text-xl text-gray-200">
-            Transform your space with our carefully curated collection of indoor and outdoor plants. 
-            Each plant is hand-picked for its beauty, health, and ability to thrive in your home.
+      <div className="relative z-10 container mx-auto px-4 h-full flex items-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="max-w-2xl text-white"
+        >
+          <h1 className="text-5xl font-bold mb-4">Discover Our Plant Collection</h1>
+          <p className="text-xl">
+            Explore our curated selection of beautiful plants, perfect for bringing life and nature into your home.
           </p>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

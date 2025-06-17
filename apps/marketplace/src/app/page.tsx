@@ -45,7 +45,7 @@ const mockPlanters = [
     id: 'p1',
     name: 'Nordic Ceramic Planter',
     price: 24.99,
-    imageUrl: '/planter/nordic-ceramic-planter.jpg',
+    imageUrl: 'https://leaffystorage.blob.core.windows.net/leaffyearth/planters/6807f7c64fd2b01ef62ea7a6/afdc4d26',
     slug: 'nordic-ceramic-planter',
     material: 'Ceramic'
   },
@@ -53,7 +53,7 @@ const mockPlanters = [
     id: 'p2',
     name: 'Minimalist Concrete Pot',
     price: 29.99,
-    imageUrl: '/planter/minimalist-concrete-pot.jpg',
+    imageUrl: 'https://leaffystorage.blob.core.windows.net/leaffyearth/planters/6807f7c64fd2b01ef62ea7a6/597e9962',
     slug: 'minimalist-concrete-pot',
     material: 'Concrete'
   },
@@ -61,7 +61,7 @@ const mockPlanters = [
     id: 'p3',
     name: 'Terracotta Classic',
     price: 19.99,
-    imageUrl: '/planter/terracotta-classic.jpg',
+    imageUrl: 'https://leaffystorage.blob.core.windows.net/leaffyearth/planters/6807f7c64fd2b01ef62ea7a6/3c41636e',
     slug: 'terracotta-classic',
     material: 'Terracotta'
   },
@@ -69,7 +69,7 @@ const mockPlanters = [
     id: 'p4',
     name: 'Modern White Ceramic',
     price: 34.99,
-    imageUrl: '/planter/modern-white-ceramic.jpg',
+    imageUrl: 'https://leaffystorage.blob.core.windows.net/leaffyearth/planters/6807f7c64fd2b01ef62ea7a6/271734cb',
     slug: 'modern-white-ceramic',
     material: 'Ceramic'
   }

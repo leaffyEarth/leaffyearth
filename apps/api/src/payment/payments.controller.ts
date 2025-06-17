@@ -10,7 +10,6 @@ export class PaymentsController {
     @Get()
     @ApiOperation({ summary: 'Get response' })
     async getResponse() {
-        console.log('hello');
         return {
             success: 'hello',
         };

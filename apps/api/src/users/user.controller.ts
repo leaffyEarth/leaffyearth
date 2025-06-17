@@ -13,7 +13,7 @@ import {
 import { UsersService } from './user.service';
 import { Request } from 'express';
 import { Roles } from '../auth/roles.decorator';
-import { QueryUsersDto } from './dto/quary-users.dto';
+import { QueryUsersDto } from './dto/query-users.dto';
 import { RequestWithUser } from '../common/types.interface';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
@@ -33,7 +33,7 @@ export class UsersController {
 
     @Get()
     @ApiOperation({ summary: 'Retrieves all users based on the provided query parameters', })
-    @Roles('owner', 'admin', 'manager')
+    // @Roles('owner', 'admin', 'manager')
     async findAll(@Query() query: QueryUsersDto) {
         return this.usersService.findAll(query);
     }

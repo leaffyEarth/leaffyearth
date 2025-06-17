@@ -13,6 +13,8 @@ import { UsersModule } from 'src/users/user.module';
 import { JwtStrategy } from './jwt.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtBearerStrategy } from './jwt-bearer.strategy';
+import { FirebaseAdminService } from './firebase/firebase-admin.service';
+import { FirebaseAuthGuard } from './firebase/firebase-auth.guard';
 
 @Module({
   imports: [
@@ -36,8 +38,9 @@ import { JwtBearerStrategy } from './jwt-bearer.strategy';
     Reflector,
     JwtStrategy,
     JwtBearerStrategy,
+    FirebaseAdminService,
   ],
   controllers: [AuthController],
-  exports: [AuthService, GoogleAuthGuard, RolesGuard],
+  exports: [AuthService, GoogleAuthGuard, RolesGuard, FirebaseAdminService],
 })
 export class AuthModule {}

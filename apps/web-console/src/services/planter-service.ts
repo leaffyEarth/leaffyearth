@@ -2,7 +2,7 @@ import { IPlanter, IPlantersResponse, ICreatePlanterDto } from "@/types/planters
 import { CreatePlanterInput } from "@/lib/validations/planter"
 import { getAuthToken } from "./auth-service"
 
-export async function getPlanters(page = 1, limit = 10): Promise<IPlantersResponse> {
+export async function getPlanters(page = 1, limit = 15): Promise<IPlantersResponse> {
   try {
     const response = await fetch(`/api/planters?page=${page}&limit=${limit}`, {
       credentials: "include",
@@ -60,8 +60,6 @@ export async function createPlanter(planterData: CreatePlanterInput): Promise<IP
     }
 
     const data = await response.json()
-
-    console.log("Planter created:", data)
 
     return data
   } catch (error) {

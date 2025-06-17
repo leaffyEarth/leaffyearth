@@ -20,20 +20,20 @@ import { JwtAuthGuard } from '../auth/jwt.guard';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { PlanterFamilyQuery } from './dto/planter-family-query.dto';
 
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
 @ApiTags('planters')
 @Controller('planters')
 export class PlantersController {
   constructor(private readonly planterService: PlanterService) {}
 
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Post()
   @ApiOperation({ summary: 'Creates a new planter' })
   async create(@Body() createPotDto: CreatePotDto) {
     return this.planterService.create(createPotDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Get()
   @ApiOperation({
     summary: 'Retrieves all planters based on the provided query parameters',
@@ -42,7 +42,7 @@ export class PlantersController {
     return this.planterService.findAll(query);
   }
 
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Get('series')
   @ApiOperation({
     summary: 'Retrieves all planter series based on the provided query parameters',
@@ -50,8 +50,16 @@ export class PlantersController {
   async findAllPlanterFamily(@Query() query: PlanterFamilyQuery) {
     return this.planterService.findAllPlanterFamily(query);
   }
+
+  @Get('getPlantersBySeries')
+  @ApiOperation({
+    summary: 'Retrieves all planters by series based on the provided query parameters',
+  })
+  async getPlantersBySeries(@Query('series') series: string) {
+    return this.planterService.getPlantersBySeries(series);
+  }
   
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Get(':id')
   @ApiOperation({ summary: 'Retrieves a specific planter by its ID.' })
   async findOne(@Param('id') id: string) {
@@ -59,7 +67,7 @@ export class PlantersController {
   }
 
 
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Patch(':id')
   @ApiOperation({
     summary:
@@ -72,7 +80,7 @@ export class PlantersController {
     return this.planterService.update(id, updateData);
   }
 
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Delete(':id/images/:imageId')
   @ApiOperation({
     summary:
@@ -96,7 +104,7 @@ export class PlantersController {
     return this.planterService.uploadPlanterImage(file, planterId);
   }
 
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @ApiOperation({ summary: 'Deletes a specific planter by its ID.' })
   async remove(@Param('id') id: string) {

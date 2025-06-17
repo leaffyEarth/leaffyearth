@@ -15,9 +15,13 @@ REM Build and push backend image
 docker build -t %DOCKER_REPO%/backend:%IMAGE_TAG% -f backend/dockerfile ../../leaffyearth
 docker push %DOCKER_REPO%/backend:%IMAGE_TAG%
 
-REM Build and push frontend image
-docker build -t %DOCKER_REPO%/frontend:%IMAGE_TAG% -f frontend/Dockerfile ../../leaffyearth
-docker push %DOCKER_REPO%/frontend:%IMAGE_TAG%
+@REM REM Build and push frontend image
+@REM docker build -t %DOCKER_REPO%/frontend:%IMAGE_TAG% -f frontend/Dockerfile ../../leaffyearth
+@REM docker push %DOCKER_REPO%/frontend:%IMAGE_TAG%
+
+REM Build and push markeplace image
+@REM docker build -t %DOCKER_REPO%/marketplace:%IMAGE_TAG% -f marketplace/Dockerfile ../../leaffyearth
+@REM docker push %DOCKER_REPO%/marketplace:%IMAGE_TAG%
 
 REM docker pull mongo:latest
 REM docker tag mongo:latest %DOCKER_REPO%/mongo:%IMAGE_TAG%
