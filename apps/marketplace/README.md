@@ -1,36 +1,127 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌿 LeaffyEarth Marketplace
 
-## Getting Started
+Welcome to LeaffyEarth - Your Premium Plant & Designer Pot Destination
 
-First, run the development server:
+![LeaffyEarth Banner](public/banner.jpg)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🚀 About LeaffyEarth
+
+LeaffyEarth is a modern e-commerce platform dedicated to bringing nature into your space with carefully curated plants and designer pots. We believe in transforming environments through the beauty of greenery while providing an exceptional shopping experience.
+
+### ✨ Key Features
+
+- 🪴 Curated collection of premium plants
+- 🏺 Designer pots and planters
+- 🎯 Personalized plant recommendations
+- 🚚 24-hour delivery service
+- 🌱 Expert plant care guides
+- 🏗️ Professional landscaping services
+- 📦 Bulk order capabilities
+
+## 🛠️ Tech Stack
+
+- **Frontend**: Next.js 14, React, TypeScript
+- **Styling**: Tailwind CSS
+- **State Management**: React Query, Zustand
+- **UI Components**: Custom components with modern design
+- **Animations**: Framer Motion
+- **API Integration**: RESTful APIs
+- **Image Optimization**: Next.js Image Component
+- **Form Handling**: React Hook Form
+- **Authentication**: NextAuth.js
+
+## 🏃‍♂️ Getting Started
+
+### Prerequisites
+
+- Node.js 18.x or later
+- npm or yarn
+- Git
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-username/leaffyearth-marketplace.git
+   ```
+
+2. Install dependencies:
+   ```bash
+   cd leaffyearth-marketplace
+   npm install
+   # or
+   yarn install
+   ```
+
+3. Set up environment variables:
+   ```bash
+   cp .env.example .env.local
+   ```
+
+4. Run the development server:
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
+
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## 📁 Project Structure
+
+```
+leaffyearth-marketplace/
+├── src/
+│   ├── app/             # App router pages
+│   ├── components/      # Reusable components
+│   ├── hooks/          # Custom hooks
+│   ├── lib/            # Utility functions
+│   ├── types/          # TypeScript types
+│   └── styles/         # Global styles
+├── public/             # Static assets
+└── tests/             # Test files
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🎨 Features & Sections
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Homepage**
+  - Hero Section
+  - Featured Products
+  - Brand Values
+  - Video Showcase
+  - Shop The Look
+  - Landscaping Services
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Shop**
+  - Plants Catalog
+  - Planters Collection
+  - Plant Care Products
+  - Bulk Orders
 
-## Learn More
+- **User Features**
+  - Authentication
+  - Personalized Recommendations
+  - Order Tracking
+  - Wishlist Management
 
-To learn more about Next.js, take a look at the following resources:
+## 🤝 Contributing
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📜 License
 
-## Deploy on Vercel
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📞 Support
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+For support, please email support@leaffyearth.com or visit our [Help Center](https://leaffyearth.com/help).
+
+## 🌟 Acknowledgments
+
+- Our amazing plant suppliers
+- Our dedicated customer community
+- All contributors who help make LeaffyEarth better
+
+---
+
+<p align="center">Made with 💚 by LeaffyEarth Team</p>

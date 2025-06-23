@@ -1,10 +1,19 @@
-export enum PlanterSeries {
+export enum planterCategoryEnum {
     terracotta_Planters = "Terracotta Planters",
     ceramic_planters = "Ceramic Planters",
     plastic_planters = "Plastic Planters",
     metal_planters = "Metal Planters",
     wooden_planters = "Wooden Planters",
     biodegradable_planters = "Biodegradable Planters"
+}
+
+export enum planterCategoryCodeEnum {
+    "Terracotta Planters" = "TP",
+    "Ceramic Planters" = "CP",
+    "Plastic Planters" = "PP",
+    "Metal Planters" = "MP",
+    "Wooden Planters" = "WP",
+    "Biodegradable Planters" = "BP"
 }
 
 export enum TerracottaPlanters {

@@ -1,0 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --foreground-rgb: 0, 0, 0;
+    --background-rgb: 255, 255, 255;
+  }
+
+  body {
+    color: rgb(var(--foreground-rgb));
+    background: rgb(var(--background-rgb));
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  .container-custom {
+    @apply mx-auto max-w-8xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-white px-6 py-2 rounded-full hover:bg-primary-dark transition-colors duration-200;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-primary px-6 py-2 rounded-full hover:bg-gray-50 transition-colors duration-200;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Custom font classes */
+.font-serif {
+  font-family: 'Playfair Display', serif;
+}
+
+/* Custom utility classes */
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom container sizes */
+.container-custom {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  max-width: 72rem; /* This is equivalent to max-w-6xl */
+}
+
+@media (min-width: 640px) {
+  .container-custom {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-custom {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Custom transitions */
+.transition-custom {
+  transition-property: all;
+  transition-duration: 300ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Image hover effects */
+.hover-scale {
+  transition-property: transform;
+  transition-duration: 300ms;
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+/* Button styles */
+.btn-primary {
+  background-color: #3C5A3D;
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 9999px;
+  transition-property: background-color;
+  transition-duration: 300ms;
+}
+
+.btn-primary:hover {
+  background-color: #2E432F;
+}
+
+.btn-secondary {
+  background-color: white;
+  color: #3C5A3D;
+  padding: 0.5rem 1.5rem;
+  border-radius: 9999px;
+  transition-property: background-color;
+  transition-duration: 300ms;
+}
+
+.btn-secondary:hover {
+  background-color: #f9fafb;
+}

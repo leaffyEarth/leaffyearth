@@ -1,8 +1,8 @@
 // plants/dto/plant-family-query.dto.ts
 
-import { IsOptional} from 'class-validator'
+import { IsOptional } from 'class-validator';
 
 export class PlantFamilyQuery {
-    @IsOptional()
-    search?: string;
+  @IsOptional()
+  search?: string;
 }

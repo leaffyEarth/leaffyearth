@@ -21,10 +21,29 @@ async function bootstrap() {
   app.use(helmet());
   app.use(cookieParser());
   app.enableCors({
-    origin: [process.env.ADMIN_CONSOLE_URL || 'http://localhost:3000', process.env.MARKETPLACE_URL || 'http://localhost:8000'],
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        process.env.ADMIN_CONSOLE_URL,
+        process.env.MARKETPLACE_URL,
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'http://localhost:5000',
+        'http://localhost:8000',
+        'https://portal.leaffyearth.com',
+        'https://leafyearth.com',
+      ];
+
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   });
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }));
+  app.useGlobalPipes(
+    new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
+  );
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

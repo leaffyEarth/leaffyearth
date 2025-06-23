@@ -9,11 +9,12 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/user.module';
 import { PaymentsModule } from './payment/payment.module';
 
+console.log("process.env.MONGODB_URI", process.env.MONGODB_URI);
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ['.env.development', '.env.production'],
+      envFilePath: ['.env.local', '.env.development', '.env.production'],
     }),
     MongooseModule.forRoot(process.env.MONGODB_URI),
     PlantsModule,
@@ -22,9 +23,9 @@ import { PaymentsModule } from './payment/payment.module';
     PartnersModule,
     AuthModule,
     UsersModule,
-    PaymentsModule
+    PaymentsModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule { }
+export class AppModule {}

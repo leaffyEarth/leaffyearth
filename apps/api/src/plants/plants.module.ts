@@ -1,17 +1,24 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 import { PlantsService } from './plants.service';
 import { PlantsController } from './plants.controller';
-import { ModelsModule } from '../models/models.module';
-import { CommonModule } from '../common/common.module';
+import { Plant, PlantSchema } from '../models/plant.schema';
+import { Pot, PotSchema } from '../models/pot.schema';
+import { SkuService } from '../common/services/sku.service';
 import { AzureBlobModule } from '../azure-blob/azure-blob.module';
+import { PlantersModule } from '../pots/planter.module';
 
 @Module({
-    imports: [
-        ModelsModule,
-        CommonModule,
-        AzureBlobModule
-    ],
-    controllers: [PlantsController],
-    providers: [PlantsService],
+  imports: [
+    MongooseModule.forFeature([
+      { name: Plant.name, schema: PlantSchema },
+      { name: Pot.name, schema: PotSchema }
+    ]),
+    AzureBlobModule,
+    PlantersModule
+  ],
+  controllers: [PlantsController],
+  providers: [PlantsService, SkuService],
+  exports: [PlantsService],
 })
-export class PlantsModule { }
+export class PlantsModule {}

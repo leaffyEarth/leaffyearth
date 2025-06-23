@@ -15,7 +15,7 @@ export class PaymentsService {
     private razorpay: any;
 
     constructor() {
-        console.log("getting the cred", process.env.RAZORPAY_KEY_ID,  process.env.RAZORPAY_SECRET)
+        console.log("getting the cred", process.env.RAZORPAY_KEY_ID,  process.env.RAZORPAY_SECRET, process.env.MONGODB_URI)
         this.razorpay = new Razorpay({
             key_id: process.env.RAZORPAY_KEY_ID || '',
             key_secret: process.env.RAZORPAY_SECRET || '',
