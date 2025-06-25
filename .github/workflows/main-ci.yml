@@ -1,0 +1,54 @@
+name: Geekbench Benchmark
+
+on:
+  workflow_dispatch:        # ⇒ manual “Run workflow” button
+  push:                     # ⇒ every commit
+    branches: [ main ]
+
+jobs:
+  benchmark:
+    runs-on: depot-ubuntu-24.04   # your C3D runner label
+    timeout-minutes: 20
+
+    steps:
+    # 1. Grab the code (even if we don't need it, good practice)
+    - uses: actions/checkout@v4
+
+    # 2. Download Geekbench 6.4 CLI tarball
+    - name: Download Geekbench
+      run: |
+        curl -sSL -o Geekbench-6.tar.gz \
+          https://cdn.geekbench.com/Geekbench-6.4.0-Linux.tar.gz
+        tar -xzf Geekbench-6.tar.gz
+        mv Geekbench-6.4.0-Linux geekbench
+    # 3. Run benchmark and save stdout
+    - name: Run Geekbench CPU benchmark
+      id: geekbench
+      run: |
+        ./geekbench/geekbench_x86_64 --cpu | tee geekbench.log
+    # 4. Parse the scores
+    - name: Extract scores
+      id: scores
+      run: |
+        SINGLE=$(grep -m1 "Single-Core Score" geekbench.log | awk '{print $(NF)}')
+        MULTI=$(grep -m1 "Multi-Core Score" geekbench.log  | awk '{print $(NF)}')
+        echo "single=$SINGLE" >> "$GITHUB_OUTPUT"
+        echo "multi=$MULTI"  >> "$GITHUB_OUTPUT"
+    # 5. Upload full log
+    - name: Upload raw Geekbench log
+      uses: actions/upload-artifact@v4
+      with:
+        name: geekbench-log
+        path: geekbench.log
+
+    # 6. Post nice summary in the run UI
+    - name: Add summary
+      run: |
+        echo "## Geekbench 6.4 CPU scores" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "| Metric | Score |" >> $GITHUB_STEP_SUMMARY
+        echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+        echo "| Single‑Core | **${{ steps.scores.outputs.single }}** |" >> $GITHUB_STEP_SUMMARY
+        echo "| Multi‑Core  | **${{ steps.scores.outputs.multi }}** |" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "_Full log stored as artifact ‘geekbench-log’._" >> $GITHUB_STEP_SUMMARY
