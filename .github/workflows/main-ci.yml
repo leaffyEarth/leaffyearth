@@ -3,7 +3,7 @@ name: Geekbench Benchmark
 on:
   workflow_dispatch:        # ⇒ manual “Run workflow” button
   push:                     # ⇒ every commit
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   benchmark:
