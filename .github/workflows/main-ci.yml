@@ -7,7 +7,7 @@ on:
 
 jobs:
   benchmark:
-    runs-on: depot-ubuntu-24.04-4   # your C3D runner label
+    runs-on: blacksmith-4vcpu-ubuntu-2404   # your C3D runner label
     timeout-minutes: 20
 
     steps:
