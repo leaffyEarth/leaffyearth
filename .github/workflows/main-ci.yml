@@ -7,28 +7,29 @@ on:
 
 jobs:
   benchmark:
-    # ────── 1. matrix definition ──────
-    strategy:
-      matrix:
-        include:
-          - runner: blacksmith-2vcpu-ubuntu-2204   # 2 vCPU  $0.004
-            vcpu: 2
-            price: 0.004
-          - runner: blacksmith-4vcpu-ubuntu-2204   # 4 vCPU  $0.008
-            vcpu: 4
-            price: 0.008
-          - runner: blacksmith-8vcpu-ubuntu-2204   # 8 vCPU  $0.016
-            vcpu: 8
-            price: 0.016
-          - runner: blacksmith-16vcpu-ubuntu-2204  # 16 vCPU $0.032
-            vcpu: 16
-            price: 0.032
-          - runner: blacksmith-32vcpu-ubuntu-2204  # 32 vCPU $0.064
-            vcpu: 32
-            price: 0.064
+    # # ────── 1. matrix definition ──────
+    # strategy:
+    #   matrix:
+    #     include:
+    #       - runner: blacksmith-2vcpu-ubuntu-2204   # 2 vCPU  $0.004
+    #         vcpu: 2
+    #         price: 0.004
+    #       - runner: blacksmith-4vcpu-ubuntu-2204   # 4 vCPU  $0.008
+    #         vcpu: 4
+    #         price: 0.008
+    #       - runner: blacksmith-8vcpu-ubuntu-2204   # 8 vCPU  $0.016
+    #         vcpu: 8
+    #         price: 0.016
+    #       - runner: blacksmith-16vcpu-ubuntu-2204  # 16 vCPU $0.032
+    #         vcpu: 16
+    #         price: 0.032
+    #       - runner: blacksmith-32vcpu-ubuntu-2204  # 32 vCPU $0.064
+    #         vcpu: 32
+    #         price: 0.064
 
-    # ────── 2. runner selection ──────
-    runs-on: ${{ matrix.runner }}
+    # # ────── 2. runner selection ──────
+    # runs-on: ${{ matrix.runner }}
+    runs-on: warp-ubuntu-2204-x64-8x
     timeout-minutes: 20
     steps:
     # 1. Grab the code (even if we don't need it, good practice)
