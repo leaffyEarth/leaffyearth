@@ -30,7 +30,7 @@ jobs:
     # # ────── 2. runner selection ──────
     # runs-on: ${{ matrix.runner }}
     # runs-on: warp-ubuntu-latest-arm64-4x
-    runs-on: depot-ubuntu-24.04-4
+    runs-on: self-hosted
     timeout-minutes: 20
     steps:
     # 1. Grab the code (even if we don't need it, good practice)
