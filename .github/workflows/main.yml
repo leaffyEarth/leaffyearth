@@ -30,4 +30,4 @@ jobs:
             node-modules-
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
