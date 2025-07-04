@@ -1,36 +1,33 @@
-name: CI Build
+name: Node.js CI with Caching
 
 on:
   push:
-    branches: [ "Sandbox" ]
+    branches: ['master']
   pull_request:
-    branches: [ "SandBox" ]
 
 jobs:
   build:
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
+
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+      - name: Cache node_modules
+        uses: actions/cache@v3
+        id: node-modules-cache
+        with:
+          path: |
+            ~/.npm
+            node_modules
+          key: node-modules-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            node-modules-
 
-    - name: Build backend
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        file: ./infra/backend/dockerfile
-        push: false
-        tags: leaffy-backend:latest
-
-    - name: Build frontend
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        file: ./infra/frontend/Dockerfile
-        push: false
-        tags: leaffy-frontend:latest 
+      - name: Install dependencies
+        run: npm ci
