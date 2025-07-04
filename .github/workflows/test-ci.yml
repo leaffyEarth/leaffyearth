@@ -1,0 +1,55 @@
+name: Node.js CI with Caching
+
+on:
+  push:
+    branches: ['SandBox']
+  pull_request:
+
+env:
+  GCS_BUCKET:  your-bucket-name              # <‑‑ change me
+  GCS_OBJECT:  bin/testfile.org-5GB.dat      # remote path inside bucket
+  LOCAL_DIR:   bin    
+
+jobs:
+  download-and-cache:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          install_components: 'gsutil'
+
+      - name: Download 5 GB artifact from GCS and measure speed
+        id: timed-download
+        run: |
+          mkdir -p "${LOCAL_DIR}"
+          FILE_PATH="${LOCAL_DIR}/$(basename ${GCS_OBJECT})"
+
+          echo "▶️  Starting download …"
+          start_ns=$(date +%s%N)                          # nanoseconds since epoch
+
+          # multi‑threaded copy
+          gsutil -m cp "gs://${GCS_BUCKET}/${GCS_OBJECT}" "${FILE_PATH}"
+
+          end_ns=$(date +%s%N)
+
+          # ─── calculate elapsed seconds (float) ───────────────────────────────
+          elapsed_ns=$((end_ns - start_ns))
+          elapsed_s=$(awk "BEGIN {printf \"%.3f\", ${elapsed_ns}/1000000000}")
+
+          # ─── compute size in bits and throughput in Gbps ────────────────────
+          bytes=$(stat --printf="%s" "${FILE_PATH}")      # file size in bytes
+          gigabits=$(awk "BEGIN {printf \"%.3f\", (${bytes} * 8) / (1024^3)}")
+          speed_gbps=$(awk "BEGIN {printf \"%.3f\", ${gigabits} / ${elapsed_s}}")
+
+          echo "⏱️  Elapsed time : ${elapsed_s} s"
+          echo "📦  File size    : ${gigabits} Gb"
+          echo "🚀  Throughput   : ${speed_gbps} Gbps"
+
+          # expose as step outputs if you need them later
+          echo "elapsed=${elapsed_s}"  >> "$GITHUB_OUTPUT"
+          echo "speed=${speed_gbps}"   >> "$GITHUB_OUTPUT"
