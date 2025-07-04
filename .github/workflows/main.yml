@@ -16,7 +16,7 @@ jobs:
       - name: Compute cache key from file URL
         id: cache-key
         run: |
-          FILE_URL="https://drive.usercontent.google.com/download?id=1n_bLJkmY4mNzLssyXPdXntT4ZYkcnF-d&export=download&authuser=1&confirm=t&uuid=49857202-938e-45f1-a0b5-104d886d1fb5&at=AN8xHopq2N_DBpEUauPhEXBXmDbF:1751630410426"
+          FILE_URL="https://cdn.hotelnearmedanta.com/testfile.org/testfile.org-5GB.dat"
           HASH=$(echo "$FILE_URL" | sha256sum | cut -d' ' -f1)
           echo "key=model-cache-$HASH" >> $GITHUB_OUTPUT
           echo "url=$FILE_URL" >> $GITHUB_OUTPUT
@@ -34,7 +34,3 @@ jobs:
         run: |
           mkdir -p ./cache
           curl -L ${{ steps.cache-key.outputs.url }} -o ./cache/model.tar.gz
-
-      - name: Extract or use file
-        run: |
-          tar -xzf ./cache/model.tar.gz -C ./cache || echo "File ready to use"
