@@ -2,7 +2,7 @@ name: Node.js CI with Caching
 
 on:
   push:
-    branches: ['master']
+    branches: ['SandBox']
   pull_request:
 
 jobs:
