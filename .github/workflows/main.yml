@@ -6,28 +6,35 @@ on:
   pull_request:
 
 jobs:
-  build:
+  download-and-cache:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Use Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+      - name: Compute cache key from file URL
+        id: cache-key
+        run: |
+          FILE_URL="https://drive.usercontent.google.com/download?id=1n_bLJkmY4mNzLssyXPdXntT4ZYkcnF-d&export=download&authuser=1&confirm=t&uuid=49857202-938e-45f1-a0b5-104d886d1fb5&at=AN8xHopq2N_DBpEUauPhEXBXmDbF:1751630410426"
+          HASH=$(echo "$FILE_URL" | sha256sum | cut -d' ' -f1)
+          echo "key=model-cache-$HASH" >> $GITHUB_OUTPUT
+          echo "url=$FILE_URL" >> $GITHUB_OUTPUT
 
-      - name: Cache node_modules
+      - name: Restore model cache
         uses: actions/cache@v3
-        id: node-modules-cache
+        id: cache
         with:
           path: |
-            ~/.npm
-            node_modules
-          key: node-modules-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            node-modules-
+            ./cache/model.tar.gz
+          key: ${{ steps.cache-key.outputs.key }}
 
-      - name: Install dependencies
-        run: npm install
+      - name: Download large file if not cached
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ./cache
+          curl -L ${{ steps.cache-key.outputs.url }} -o ./cache/model.tar.gz
+
+      - name: Extract or use file
+        run: |
+          tar -xzf ./cache/model.tar.gz -C ./cache || echo "File ready to use"
