@@ -6,7 +6,7 @@ on:
   pull_request:
 
 env:
-  GCS_BUCKET:  your-bucket-name              # <‑‑ change me
+  GCS_BUCKET:  monkci-gha-runner-cache              # <‑‑ change me
   GCS_OBJECT:  bin/testfile.org-5GB.dat      # remote path inside bucket
   LOCAL_DIR:   bin    
 
