@@ -16,7 +16,7 @@ jobs:
       - name: Compute cache key from file URL
         id: cache-key
         run: |
-          FILE_URL="https://testfileorg.netwet.net/500MB-CZIPtestfile.org.zip"
+          FILE_URL="https://cdn.hotelnearmedanta.com/testfile.org/testfile.org-5GB.dat"
           HASH=$(echo "$FILE_URL" | sha256sum | cut -d' ' -f1)
           echo "key=model-cache-$HASH" >> $GITHUB_OUTPUT
           echo "url=$FILE_URL" >> $GITHUB_OUTPUT
