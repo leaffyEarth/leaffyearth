@@ -13,7 +13,7 @@ jobs:
     # ── matrix of primitive strings ──
     strategy:
       matrix:
-        label: [ "ubuntu-latest", "ubuntu-latest", "ubuntu-latest" ]
+        label: [ "ubuntu-latest", "ubuntu-latest", "ubuntu-latest", "ubuntu-latest", "ubuntu-latest", "ubuntu-latest", "ubuntu-latest", "ubuntu-latest" ]
 
     name: Geekbench – ${{ matrix.label }}
 
