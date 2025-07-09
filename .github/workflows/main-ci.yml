@@ -1,76 +1,54 @@
 name: Geekbench Benchmark
 
 on:
-  workflow_dispatch:        # ⇒ manual “Run workflow” button
-  push:                     # ⇒ every commit
+  workflow_dispatch:
+  push:
     branches: [ master ]
 
 jobs:
   benchmark:
-    # # ────── 1. matrix definition ──────
-    # strategy:
-    #   matrix:
-    #     include:
-    #       - runner: blacksmith-2vcpu-ubuntu-2204   # 2 vCPU  $0.004
-    #         vcpu: 2
-    #         price: 0.004
-    #       - runner: blacksmith-4vcpu-ubuntu-2204   # 4 vCPU  $0.008
-    #         vcpu: 4
-    #         price: 0.008
-    #       - runner: blacksmith-8vcpu-ubuntu-2204   # 8 vCPU  $0.016
-    #         vcpu: 8
-    #         price: 0.016
-    #       - runner: blacksmith-16vcpu-ubuntu-2204  # 16 vCPU $0.032
-    #         vcpu: 16
-    #         price: 0.032
-    #       - runner: blacksmith-32vcpu-ubuntu-2204  # 32 vCPU $0.064
-    #         vcpu: 32
-    #         price: 0.064
-
-    # # ────── 2. runner selection ──────
-    # runs-on: ${{ matrix.runner }}
-    # runs-on: warp-ubuntu-latest-arm64-4x
+    # every job runs on the same ubuntu‑latest runner
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+
+    # ── matrix of primitive strings ──
+    strategy:
+      matrix:
+        label: [ "ubuntu-latest", "ubuntu-latest", "ubuntu-latest" ]
+
+    name: Geekbench – ${{ matrix.label }}
+
     steps:
-    # 1. Grab the code (even if we don't need it, good practice)
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    # 2. Download Geekbench 6.4 CLI tarball
-    - name: Download Geekbench
-      run: |
-        curl -sSL -o Geekbench-6.tar.gz \
-          https://cdn.geekbench.com/Geekbench-6.4.0-Linux.tar.gz
-        tar -xzf Geekbench-6.tar.gz
-        mv Geekbench-6.4.0-Linux geekbench
-    # 3. Run benchmark and save stdout
-    - name: Run Geekbench CPU benchmark
-      id: geekbench
-      run: |
-        ./geekbench/geekbench_x86_64 --cpu | tee geekbench.log
-    # 4. Parse the scores
-    - name: Extract scores
-      id: scores
-      run: |
-        SINGLE=$(grep -m1 "Single-Core Score" geekbench.log | awk '{print $(NF)}')
-        MULTI=$(grep -m1 "Multi-Core Score" geekbench.log  | awk '{print $(NF)}')
-        echo "single=$SINGLE" >> "$GITHUB_OUTPUT"
-        echo "multi=$MULTI"  >> "$GITHUB_OUTPUT"
-    # 5. Upload full log
-    - name: Upload raw Geekbench log
-      uses: actions/upload-artifact@v4
-      with:
-        name: geekbench-log
-        path: geekbench.log
+      - name: Download Geekbench
+        run: |
+          curl -sSL -o Geekbench-6.tar.gz \
+            https://cdn.geekbench.com/Geekbench-6.4.0-Linux.tar.gz
+          tar -xzf Geekbench-6.tar.gz
+          mv Geekbench-6.4.0-Linux geekbench
 
-    # 6. Post nice summary in the run UI
-    - name: Add summary
-      run: |
-        echo "## Geekbench 6.4 CPU scores" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "| Metric | Score |" >> $GITHUB_STEP_SUMMARY
-        echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
-        echo "| Single‑Core | **${{ steps.scores.outputs.single }}** |" >> $GITHUB_STEP_SUMMARY
-        echo "| Multi‑Core  | **${{ steps.scores.outputs.multi }}** |" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "_Full log stored as artifact ‘geekbench-log’._" >> $GITHUB_STEP_SUMMARY
+      - name: Run Geekbench CPU benchmark
+        id: run
+        run: |
+          ./geekbench/geekbench_x86_64 --cpu | tee geekbench.log
+
+      - name: Extract scores
+        id: scores
+        run: |
+          SINGLE=$(grep -m1 "Single-Core Score" geekbench.log | awk '{print $NF}')
+          MULTI=$(grep -m1 "Multi-Core Score"  geekbench.log | awk '{print $NF}')
+          echo "single=$SINGLE" >> $GITHUB_OUTPUT
+          echo "multi=$MULTI"  >> $GITHUB_OUTPUT
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: geekbench-log-${{ matrix.label }}
+          path: geekbench.log
+
+      - name: Add summary
+        run: |
+          echo "## Geekbench 6.4 – ${{ matrix.label }}"           >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Score |"                               >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|"                               >> $GITHUB_STEP_SUMMARY
+          echo "| Single‑Core | **${{ steps.scores.outputs.single }}** |" >> $GITHUB_STEP_SUMMARY
+          echo "| Multi‑Core  | **${{ steps.scores.outputs.multi }}** |"  >> $GITHUB_STEP_SUMMARY
