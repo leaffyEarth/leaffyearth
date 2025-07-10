@@ -1,54 +1,38 @@
-name: Geekbench Benchmark
+
+name: CPU Benchmark Test
 
 on:
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-  push:
-    branches: [ master ]
+  # You can also trigger it on a push to the main branch, for example:
+  # push:
+  #   branches: [ main ]
 
 jobs:
-  benchmark:
-    # every job runs on the same ubuntu‑latest runner
+  run-passmark-benchmark:
+    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    # ── matrix of primitive strings ──
-    strategy:
-      matrix:
-        label: [ "ubuntu-latest", "ubuntu-latest", "ubuntu-latest", "ubuntu-latest", "ubuntu-latest", "ubuntu-latest", "ubuntu-latest", "ubuntu-latest" ]
-
-    name: Geekbench – ${{ matrix.label }}
-
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Download Geekbench
+      # Step 1: Update package lists and install necessary dependencies
+      # We install unzip to extract the tool and libncurses5 for the tool to run.
+      - name: Install Dependencies
         run: |
-          curl -sSL -o Geekbench-6.tar.gz \
-            https://cdn.geekbench.com/Geekbench-6.4.0-Linux.tar.gz
-          tar -xzf Geekbench-6.tar.gz
-          mv Geekbench-6.4.0-Linux geekbench
+          sudo apt-get update
+          sudo apt-get install -y unzip libncurses5
 
-      - name: Run Geekbench CPU benchmark
-        id: run
+      # Step 2: Download the PassMark PerformanceTest tool
+      - name: Download PassMark Tool
+        run: wget https://www.passmark.com/downloads/PerformanceTest_Linux_x86-64.zip -O pt_linux.zip
+
+      # Step 3: Unzip the downloaded file
+      - name: Unzip Tool
+        run: unzip pt_linux.zip
+
+      # Step 4: Make the benchmark tool executable and run it
+      # This step navigates into the created directory, sets the permission, and runs the CPU benchmark.
+      - name: Run CPU Benchmark
         run: |
-          ./geekbench/geekbench_x86_64 --cpu | tee geekbench.log
-
-      - name: Extract scores
-        id: scores
-        run: |
-          SINGLE=$(grep -m1 "Single-Core Score" geekbench.log | awk '{print $NF}')
-          MULTI=$(grep -m1 "Multi-Core Score"  geekbench.log | awk '{print $NF}')
-          echo "single=$SINGLE" >> $GITHUB_OUTPUT
-          echo "multi=$MULTI"  >> $GITHUB_OUTPUT
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: geekbench-log-${{ matrix.label }}
-          path: geekbench.log
-
-      - name: Add summary
-        run: |
-          echo "## Geekbench 6.4 – ${{ matrix.label }}"           >> $GITHUB_STEP_SUMMARY
-          echo "| Metric | Score |"                               >> $GITHUB_STEP_SUMMARY
-          echo "|--------|-------|"                               >> $GITHUB_STEP_SUMMARY
-          echo "| Single‑Core | **${{ steps.scores.outputs.single }}** |" >> $GITHUB_STEP_SUMMARY
-          echo "| Multi‑Core  | **${{ steps.scores.outputs.multi }}** |"  >> $GITHUB_STEP_SUMMARY
+          cd PerformanceTest
+          chmod +x pt_linux_x64
+          ./pt_linux_x64 -c
