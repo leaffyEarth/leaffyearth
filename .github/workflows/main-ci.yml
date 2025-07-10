@@ -25,4 +25,4 @@ jobs:
         run: |
           cd PerformanceTest
           chmod +x pt_linux_x64
-          ./pt_linux_x64 -c
+          ./pt_linux_x64 -r 1
