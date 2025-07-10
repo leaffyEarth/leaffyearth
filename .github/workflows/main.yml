@@ -6,28 +6,12 @@ on:
   pull_request:
 
 jobs:
-  build:
+  debug:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-      - name: Use Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Cache node_modules
-        uses: actions/cache@v3
-        id: node-modules-cache
-        with:
-          path: |
-            ~/.npm
-            node_modules
-          key: node-modules-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            node-modules-
-
-      - name: Install dependencies
-        run: npm install
+      - name: Set up SSH debug session
+        uses: mxschmitt/action-tmate@v3
+        timeout-minutes: 30
