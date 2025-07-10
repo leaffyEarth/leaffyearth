@@ -1,44 +1,15 @@
-name: PassMark CPU Benchmark
+name: Debug GitHub Runner
 
 on:
-  workflow_dispatch:        # manual trigger
-  push:                     # or run on every push
-    branches: [ master ]
+  workflow_dispatch:
 
 jobs:
-  passmark-cpu:
-    runs-on: ubuntu-22.04           # ⚠️ pin to Jammy (22.04); 24.04 no longer has libncurses5
-    timeout-minutes: 20             # PassMark finishes in <5 min on 2 vCPU
-
+  debug:
+    runs-on: ubuntu-latest
     steps:
-      - name: Install deps
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y unzip libncurses5
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-      - name: Download PassMark CLI
-        run: |
-          wget -q https://www.passmark.com/downloads/PerformanceTest_Linux_x86-64.zip -O pt.zip
-          unzip -q pt.zip
-          chmod +x PerformanceTest/pt_linux_x64
-
-      - name: Run CPU benchmark
-        id: bench
-        run: |
-          cd PerformanceTest
-          ./pt_linux_x64 -r 1 -d 1 | tee result.txt        # -c = CPU only, -x = output JSON
-          cat result.txt
-          echo "RESULT<<EOF" >> $GITHUB_ENV
-          cat result.txt >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-
-      - name: Upload raw JSON (optional)
-        uses: actions/upload-artifact@v4
-        with:
-          name: passmark-result
-          path: PerformanceTest/result.json
-
-      - name: Print single‑thread score in summary
-        run: |
-          cpu_score=$(jq '.CPUmarkResult.CPUTotal' PerformanceTest/result.json)
-          echo "### PassMark CPU Score: **$cpu_score**" >> $GITHUB_STEP_SUMMARY
+      - name: Set up SSH debug session
+        uses: mxschmitt/action-tmate@v3
+        timeout-minutes: 30
