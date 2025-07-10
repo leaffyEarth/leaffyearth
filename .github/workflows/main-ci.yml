@@ -1,28 +1,24 @@
-name: CPU Benchmark Test
+name: Advanced Benchmark with Phoronix
 
 on:
   workflow_dispatch:
-  push:
-    branches: [ master ]
 
 jobs:
-  run-passmark-benchmark:
-    runs-on: ubuntu-22.04     # pin to jammy
+  run-phoronix:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Install dependencies
+      - name: Install Phoronix Test Suite
         run: |
-          sudo apt-get update
-          sudo apt-get install -y unzip libncurses5
+          # Download and install the suite
+          wget https://phoronix-test-suite.com/releases/phoronix-test-suite-10.8.4.tar.gz
+          tar -xf phoronix-test-suite-10.8.4.tar.gz
+          cd phoronix-test-suite/
 
-      - name: Download PassMark Tool
-        run: wget https://www.passmark.com/downloads/PerformanceTest_Linux_x86-64.zip -O pt_linux.zip
-
-      - name: Unzip Tool
-        run: unzip pt_linux.zip
-
-      - name: Run CPU Benchmark
+      - name: Run a CPU Benchmark (Stress-NG)
+        # This will auto-download and run the 'Stress-NG' test for the CPU
         run: |
-          cd PerformanceTest
-          chmod +x pt_linux_x64
-          ./pt_linux_x64 -r 1
+          cd phoronix-test-suite/
+          export DEBIAN_FRONTEND=noninteractive
+          # The 'batch-run' command is for non-interactive execution
+          ./phoronix-test-suite batch-run pts/stress-ng
