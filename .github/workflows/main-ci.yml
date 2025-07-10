@@ -16,9 +16,16 @@ jobs:
           cd phoronix-test-suite/
 
       - name: Run a CPU Benchmark (Stress-NG)
-        # This will auto-download and run the 'Stress-NG' test for the CPU
         run: |
           cd phoronix-test-suite/
           export DEBIAN_FRONTEND=noninteractive
-          # The 'batch-run' command is for non-interactive execution
+          
+          # First, run batch-setup for non-interactive configuration
+          ./phoronix-test-suite batch-setup
+          
+          # Now, run the actual benchmark using batch-run
           ./phoronix-test-suite batch-run pts/stress-ng
+        env:
+          # Optional: Add these environment variables to upload results
+          UPLOAD_RESULTS: 1
+          ANONYMOUS_LOGIN: 1
