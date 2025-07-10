@@ -1,31 +1,43 @@
-name: Advanced Benchmark with Phoronix
+name: PassMark CPU Benchmark
 
 on:
-  push:
+  workflow_dispatch:        # manual trigger
+  push:                     # or run on every push
     branches: [ master ]
+
 jobs:
-  run-phoronix:
-    runs-on: ubuntu-latest
+  passmark-cpu:
+    runs-on: ubuntu-22.04           # ⚠️ pin to Jammy (22.04); 24.04 no longer has libncurses5
+    timeout-minutes: 20             # PassMark finishes in <5 min on 2 vCPU
 
     steps:
-      - name: Install Phoronix Test Suite
+      - name: Install deps
         run: |
-          # Download and install the suite
-          wget https://phoronix-test-suite.com/releases/phoronix-test-suite-10.8.4.tar.gz
-          tar -xf phoronix-test-suite-10.8.4.tar.gz
-          cd phoronix-test-suite/
+          sudo apt-get update
+          sudo apt-get install -y unzip libncurses5
 
-      - name: Run a CPU Benchmark (Stress-NG)
+      - name: Download PassMark CLI
         run: |
-          cd phoronix-test-suite/
-          export DEBIAN_FRONTEND=noninteractive
-          
-          # First, run batch-setup for non-interactive configuration
-          ./phoronix-test-suite batch-setup
-          
-          # Now, run the actual benchmark using batch-run
-          ./phoronix-test-suite batch-run pts/stress-ng
-        env:
-          # Optional: Add these environment variables to upload results
-          UPLOAD_RESULTS: 1
-          ANONYMOUS_LOGIN: 1
+          wget -q https://www.passmark.com/downloads/PerformanceTest_Linux_x86-64.zip -O pt.zip
+          unzip -q pt.zip
+          chmod +x PerformanceTest/pt_linux_x64
+
+      - name: Run CPU benchmark
+        id: bench
+        run: |
+          cd PerformanceTest
+          ./pt_linux_x64 -c -x result.json         # -c = CPU only, -x = output JSON
+          echo "RESULT<<EOF" >> $GITHUB_ENV
+          cat result.json >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Upload raw JSON (optional)
+        uses: actions/upload-artifact@v4
+        with:
+          name: passmark-result
+          path: PerformanceTest/result.json
+
+      - name: Print single‑thread score in summary
+        run: |
+          cpu_score=$(jq '.CPUmarkResult.CPUTotal' PerformanceTest/result.json)
+          echo "### PassMark CPU Score: **$cpu_score**" >> $GITHUB_STEP_SUMMARY
