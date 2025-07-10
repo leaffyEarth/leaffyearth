@@ -1,37 +1,28 @@
 name: CPU Benchmark Test
 
 on:
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-  # You can also trigger it on a push to the main branch, for example:
   push:
     branches: [ master ]
 
 jobs:
   run-passmark-benchmark:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04     # pin to jammy
 
     steps:
-      # Step 1: Update package lists and install necessary dependencies
-      # We install unzip to extract the tool and libncurses5 for the tool to run.
-      - name: Install Dependencies
+      - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y unzip libtinfo5
-    
-      # Step 2: Download the PassMark PerformanceTest tool
+          sudo apt-get install -y unzip libncurses5
+
       - name: Download PassMark Tool
         run: wget https://www.passmark.com/downloads/PerformanceTest_Linux_x86-64.zip -O pt_linux.zip
 
-      # Step 3: Unzip the downloaded file
       - name: Unzip Tool
         run: unzip pt_linux.zip
 
-      # Step 4: Make the benchmark tool executable and run it
-      # This step navigates into the created directory, sets the permission, and runs the CPU benchmark.
       - name: Run CPU Benchmark
         run: |
           cd PerformanceTest
           chmod +x pt_linux_x64
-          ./pt_linux_x64 -c
+          ./pt_linux_x64 -c
