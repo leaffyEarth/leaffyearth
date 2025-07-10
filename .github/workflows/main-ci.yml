@@ -27,6 +27,7 @@ jobs:
         run: |
           cd PerformanceTest
           ./pt_linux_x64 -r 1 -d 1 | tee result.txt        # -c = CPU only, -x = output JSON
+          cat result.txt
           echo "RESULT<<EOF" >> $GITHUB_ENV
           cat result.json >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
