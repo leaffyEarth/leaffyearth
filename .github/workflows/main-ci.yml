@@ -4,8 +4,8 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
   # You can also trigger it on a push to the main branch, for example:
-  # push:
-  #   branches: [ main ]
+  push:
+    branches: [ master ]
 
 jobs:
   run-passmark-benchmark:
