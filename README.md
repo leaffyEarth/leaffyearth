@@ -8,7 +8,7 @@ This repository consists of three main workspaces:
 
 ### **📍 `apps/web` (Frontend)**
 - **Technology:** Next.js 15 (App Router) + React 19 + TailwindCSS
-- **Purpose:** The main user interface for managing the contact cente
+- **Purpose:** The main user interface for managing the contact center
 - **Location:** `apps/web`
 - **How to Start:** `pnpm --filter web run dev`
 
