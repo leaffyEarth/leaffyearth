@@ -1,0 +1,44 @@
+name: Caching-test
+on:
+  push:
+    branches: ['SandBox']
+
+jobs:
+  download-and-cache:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          install_components: 'gsutil'
+
+      - name: Download 5 GB artifact from GCS and measure speed
+        id: timed-download
+        run: |
+          # CONFIGURATION
+          FILE="bigtest.img"                          # Path to the local file
+          BUCKET="monkci-gha-runner-cache"            # Your GCS bucket
+          DEST="bin/"                                 # Destination path in bucket (optional, leave "" for root)
+
+          echo "🚀downloading '$FILE' ( MB) to gs://$BUCKET/${DEST}${FILE}..."
+
+          # TIME UPLOAD
+          START=$(date +%s.%N)
+          gcloud storage cp gs://monkci-gha-runner-cache/bin/bigtest.img .
+          END=$(date +%s.%N)
+
+          FILESIZE_BYTES=$(stat --format=%s "$FILE" 2>/dev/null || stat -f%z "$FILE")
+          FILESIZE_MB=$(awk "BEGIN {printf \"%.2f\", $FILESIZE_BYTES/1024/1024}")
+
+          # CALCULATE TIME + SPEED
+          ELAPSED=$(awk "BEGIN {printf \"%.3f\", $END - $START}")
+          SPEED_MBPS=$(awk "BEGIN {printf \"%.2f\", $FILESIZE_MB / $ELAPSED}")
+
+          echo ""
+          echo "✅ Upload completed."
+          echo "⏱  Time taken: $ELAPSED seconds"
+          echo "⚡ Speed: $SPEED_MBPS MB/s"
