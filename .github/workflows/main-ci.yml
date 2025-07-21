@@ -7,7 +7,7 @@ on:
 
 jobs:
   benchmark:
-    runs-on: blacksmith-8vcpu-ubuntu-2204   # your C3D runner label
+    runs-on: self-hosted   # your C3D runner label
     timeout-minutes: 20
 
     steps:
