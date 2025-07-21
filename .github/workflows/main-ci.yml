@@ -52,4 +52,4 @@ jobs:
         echo "| Multi‑Core  | **${{ steps.scores.outputs.multi }}** |" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "_Full log stored as artifact ‘geekbench-log’._" >> $GITHUB_STEP_SUMMARY
-Update main-ci.yml · 
+
