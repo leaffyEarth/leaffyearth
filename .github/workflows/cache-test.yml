@@ -16,29 +16,32 @@ jobs:
         with:
           install_components: 'gsutil'
 
-      - name: Download 5 GB artifact from GCS and measure speed
+      - name: Download 5 GB artifact from GCS and measure speed
         id: timed-download
         run: |
           # CONFIGURATION
-          FILE="bigtest.img"                          # Path to the local file
-          BUCKET="monkci-gha-runner-cache"            # Your GCS bucket
-          DEST="bin/"                                 # Destination path in bucket (optional, leave "" for root)
+          FILE="bigtest.img"
+          BUCKET="monkci-gha-runner-cache"
+          DEST="bin/"
 
-          echo "🚀downloading '$FILE' ( MB) to gs://$BUCKET/${DEST}${FILE}..."
+          echo "🚀 Downloading '$FILE' to gs://$BUCKET/${DEST}${FILE}..."
 
-          # TIME UPLOAD
+          # TIME DOWNLOAD
           START=$(date +%s.%N)
-          gcloud storage cp gs://monkci-gha-runner-cache/bin/bigtest.img .
+          gcloud storage cp gs://$BUCKET/${DEST}${FILE} .
           END=$(date +%s.%N)
 
+          # GET FILE SIZE
           FILESIZE_BYTES=$(stat --format=%s "$FILE" 2>/dev/null || stat -f%z "$FILE")
           FILESIZE_MB=$(awk "BEGIN {printf \"%.2f\", $FILESIZE_BYTES/1024/1024}")
+          FILESIZE_Gb=$(awk "BEGIN {printf \"%.2f\", ($FILESIZE_BYTES * 8) / (1024*1024*1024)}")
 
           # CALCULATE TIME + SPEED
           ELAPSED=$(awk "BEGIN {printf \"%.3f\", $END - $START}")
-          SPEED_MBPS=$(awk "BEGIN {printf \"%.2f\", $FILESIZE_MB / $ELAPSED}")
+          SPEED_Gbps=$(awk "BEGIN {printf \"%.3f\", ($FILESIZE_BYTES * 8) / (1024*1024*1024) / $ELAPSED}")
 
           echo ""
-          echo "✅ Upload completed."
-          echo "⏱  Time taken: $ELAPSED seconds"
-          echo "⚡ Speed: $SPEED_MBPS MB/s"
+          echo "✅ Download completed."
+          echo "📦 Size: ${FILESIZE_Gb} Gb"
+          echo "⏱  Time taken: ${ELAPSED} seconds"
+          echo "⚡ Speed: ${SPEED_Gbps} Gbps"
