@@ -3,7 +3,7 @@ name: Geekbench Benchmark
 on:
   workflow_dispatch:        # ⇒ manual “Run workflow” button
   push:                     # ⇒ every commit
-    branches: [ master ]
+    branches: [ SandBox ]
 
 jobs:
   benchmark:
@@ -30,7 +30,7 @@ jobs:
     # # ────── 2. runner selection ──────
     # runs-on: ${{ matrix.runner }}
     # runs-on: warp-ubuntu-latest-arm64-4x
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
     # 1. Grab the code (even if we don't need it, good practice)
