@@ -1,0 +1,36 @@
+
+name: Node.js CI with Caching depot
+
+on:
+  push:
+    branches: ['master']
+  pull_request:
+
+jobs:
+  download-and-cache:
+    runs-on: depot-ubuntu-24.04-4
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Compute cache key from file URL
+        id: cache-key
+        run: |
+          FILE_URL="https://cdn.hotelnearmedanta.com/testfile.org/testfile.org-5GB.dat"
+          HASH=$(echo "$FILE_URL" | sha256sum | cut -d' ' -f1)
+          echo "key=model-cache-$HASH" >> $GITHUB_OUTPUT
+          echo "url=$FILE_URL" >> $GITHUB_OUTPUT
+      - name: Restore model cache
+        uses: actions/cache@v3
+        id: cache
+        with:
+          path: |
+            ./cache/model.tar.gz
+          key: ${{ steps.cache-key.outputs.key }}
+
+      - name: Download large file if not cached
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ./cache
+          curl -L ${{ steps.cache-key.outputs.url }} -o ./cache/model.tar.gz
