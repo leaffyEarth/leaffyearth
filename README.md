@@ -1,5 +1,5 @@
 # **LeaffyEarth**
-🚀 **LeaffyEarth** is a modern **contact center platform** designed for seamless customer communication and efficient call management. This monorepo setup uses **PNPM Workspaces** and **Turborepo** for scalable development.
+🚀 **LeaffyEarth** is a modern **contact center platform** designed for seamless customer communication and efficient call management. This monorepo setup uses **PNPM Workspaces** and **Turborepo** for scalable developments.
 
 ---
 
