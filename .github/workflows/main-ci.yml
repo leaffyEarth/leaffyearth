@@ -7,7 +7,7 @@ on:
 
 jobs:
   benchmark:
-    runs-on: leaffyearth-runners  # your C3D runner label
+    runs-on: monkci-runners-4vcpu  # your C3D runner label
     timeout-minutes: 20
 
     steps:
