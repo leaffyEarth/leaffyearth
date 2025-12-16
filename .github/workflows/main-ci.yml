@@ -7,7 +7,7 @@ on:
 
 jobs:
   benchmark:
-    runs-on: linux_4_core  # your C3D runner label
+    runs-on: linux_4_core  
     timeout-minutes: 20
 
     steps:
