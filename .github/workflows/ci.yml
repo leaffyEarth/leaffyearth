@@ -2,9 +2,9 @@ name: CI Build
 
 on:
   push:
-    branches: [ "Sandbox" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "SandBox" ]
+    branches: [ "main" ]
 
 jobs:
   build:
